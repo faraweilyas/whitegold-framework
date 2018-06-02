@@ -1,7 +1,7 @@
 {
     "name": "whytegold/framework",
     "type": "library",
-    "description": "whiteGold mini PHP framework",
+    "description": "The whiteGold mini PHP framework",
     "keywords": ["mini", "framework", "library"],
     "license": "MIT",
     "authors": [

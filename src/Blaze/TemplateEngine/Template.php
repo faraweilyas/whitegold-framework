@@ -1,0 +1,78 @@
+<?php 
+	namespace Blaze\TemplateEngine;
+	
+	/**
+	* whiteGold - mini PHP Framework
+	*
+	* @package whiteGold
+	* @author Farawe iLyas <faraweilyas@gmail.com>
+	* @link http://faraweilyas.me
+	*
+	* Template Class
+	*/
+	abstract class Template
+	{			
+		private $file;
+		private $location 			= TEMPLATE;
+		private $assignedVariables 	= [];
+
+		/**
+		* Sets the assignedVariables
+		* @param mixed $key
+		* @param mixed $value
+		*/
+		final protected function set ($key, $value)
+		{
+			$this->assignedVariables[$key] = $value;
+		}
+
+		/**
+		* Sets the template location
+		* @param string $location
+		*/
+		final protected function setLocation (string $location)
+		{
+			$this->location = $location;
+		}
+
+		/**
+		* Sets the template file
+		* @param string $fileLocation
+		*/
+		final protected function setFile (string $fileLocation)
+		{
+			$this->file = $fileLocation;
+		}
+
+		/**
+		* Sets the template file location
+		* @param string $file
+		*/
+		final protected function setFileLocation (string $file)
+		{
+	        $file 		= $this->location.$file;
+	        $pathParts  = pathinfo($file);
+	        $this->file = !isset($pathParts['extension']) ? $file.".inc" : $file;
+		}
+		
+		/**
+		* Displays the template being generated
+		* @param bool $return
+		* @return mixed
+		*/
+		final protected function display (bool $return=FALSE)
+		{
+			if (file_exists($this->file)):
+				$output = file_get_contents($this->file);
+				foreach ($this->assignedVariables as $key => $value) 
+					$output = preg_replace('/{'.$key.'}/', $value, $output);
+			else:
+				$output = "*** Missing template error ***";
+			endif;
+
+			if ($return)
+				return $output;
+			else
+				echo $output;
+		}
+	}

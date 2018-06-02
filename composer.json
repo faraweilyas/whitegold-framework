@@ -1,0 +1,29 @@
+{
+    "name": "whytegold/framework",
+    "type": "library",
+    "description": "whiteGold mini PHP framework",
+    "keywords": ["mini", "framework", "library"],
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Farawe iLyas",
+            "email": "faraweilyas@gmail.com",
+            "homepage": "https://faraweilyas.me",
+            "role": "Software Engineer"
+        }
+    ],
+    "autoload": {
+    	"psr-4": {
+    		"Blaze\\": "src/Blaze"
+    	},
+        "files": [
+            "src/Blaze/Bootstrap/Helper.php",
+            "src/Blaze/Bootstrap/Config.php"
+        ]
+    },
+    "require": {
+        "php": ">=7.0.0",
+        "phpmailer/phpmailer": "~6.0",
+        "league/oauth2-google": "^2.0"
+    }
+}

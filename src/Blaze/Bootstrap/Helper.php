@@ -45,11 +45,13 @@
         /**
         * Get defined constant
         * @param string $name
+        * @param bool $debug
         * @return mixed
         */
-        function getConstant (string $name) 
+        function getConstant (string $name, bool $debug=FALSE) 
         {
-            return defined($name) ? constant($name) : "";
+            $errorMessage = $debug ? "{$name} is not defined" : "";
+            return defined($name) ? constant($name) : $errorMessage;
         }
     endif;
 

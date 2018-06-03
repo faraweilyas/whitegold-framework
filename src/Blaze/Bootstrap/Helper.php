@@ -28,6 +28,31 @@
         }
     endif;
 
+    if (!function_exists('setConstant')):
+        /**
+        * Check constant if defined then don't define it.
+        * @param string $name
+        * @param string $value
+        * @return void
+        */
+        function setConstant (string $name, string $value) 
+        {
+            defined($name) ? NULL : define($name, $value);
+        }
+    endif;
+
+    if (!function_exists('getConstant')):
+        /**
+        * Get defined constant
+        * @param string $name
+        * @return mixed
+        */
+        function getConstant (string $name) 
+        {
+            return defined($name) ? constant($name) : "";
+        }
+    endif;
+
     if (!function_exists('minifyHTMLOutput')):
         /**
         * Minify HTML Output

@@ -3,3 +3,4 @@ index.php
 composer.lock
 .DS_Store
 .idea
+.phpintel/

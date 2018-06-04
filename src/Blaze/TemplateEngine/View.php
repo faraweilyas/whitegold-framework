@@ -13,9 +13,19 @@
 	class View
 	{
 		// Stores the location of the views that are being included.
-		public static $location 			= VIEW;
+		public static $location;
+
 		// Stores the variables that are passed to the view.
-		public static $passedVariables 		= [];
+		public static $passedVariables = [];
+
+		/**
+		* Get the view location
+		* @return string
+		*/
+		final public static function getLocation () : string
+		{
+        	return empty(static::$location) ? getConstant("VIEW") : static::$location;
+		}
 
 		/**
 		* Make a view.
@@ -26,9 +36,8 @@
 		public static function make (string $file, array $variables=[]) : bool
 		{
 			$fileLocation = static::fileAnalyzer($file);			
-			if (file_exists($fileLocation))
-			{
-				ob_start(MINIFY_HTML_OUTPUT ? 'minifyHTMLOutput' : NULL);
+			if (file_exists($fileLocation)):
+				ob_start(getConstant('MINIFY_HTML_OUTPUT') ? 'minifyHTMLOutput' : NULL);
 				if (!empty($variables)) self::with($variables);
 		        extract($GLOBALS, EXTR_OVERWRITE);
 				extract(static::$passedVariables, EXTR_OVERWRITE);
@@ -37,7 +46,7 @@
 				ob_end_flush();
 				// print ob_get_clean();
 				return TRUE;
-			}
+			endif;
 			print "'$fileLocation': File was not found."; 
 			return FALSE;
 		}
@@ -61,6 +70,6 @@
 		*/
 		final protected static function fileAnalyzer (string $file) : string
 		{
-			return static::$location.str_replace(".", "/", $file).".php";
+			return static::getLocation().str_replace(".", "/", $file).".php";
 		}
 	}

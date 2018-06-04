@@ -16,7 +16,7 @@
 	{
 		protected $message;
 		protected $level;
-		protected $logDir = LOG;
+		protected $logDir;
 
 		public $logFile;
 		public $keys;
@@ -37,6 +37,7 @@
 		{
 			$this->message 	= $message;
 			$this->level 	= strtoupper($level);
+			$this->logDir 	= getConstant("LOG");
 		}
 
 		/**
@@ -239,16 +240,16 @@
 
 	    function test ()
 	    {
-		    $fileLog    = new Log;
-		    // $fileLog->setLogFile("actionLog.txt")->fileLog("|", "#241561DHSW", "Follow", "Hello");
-		    $readFile   = $fileLog->readFile(LOG."users.txt", ['controller', 'email', 'ceo', 'ceoEmail'], 'ASC');
-		    $users      = $readFile
-		                ->findWhere('controller', 'Blue')
-		                ->result;
-		    var_dump($fileLog, $users);
-		    $users      = $fileLog
-		                ->refresh()->findWhere('email', "green@gmail.com")
-		                ->result;
-		    var_dump($users);
+		    $fileLog = new Log;
+		    $fileLog->setLogFile("actionLog.txt")->fileLog("|", "#241561DHSW", "Follow", "Hello");
+		    // $readFile   = $fileLog->readFile(LOG."users.txt", ['controller', 'email', 'ceo', 'ceoEmail'], 'ASC');
+		    // $users      = $readFile
+		    //             ->findWhere('controller', 'Blue')
+		    //             ->result;
+		    // var_dump($fileLog, $users);
+		    // $users      = $fileLog
+		    //             ->refresh()->findWhere('email', "green@gmail.com")
+		    //             ->result;
+		    // var_dump($users);
 	    }
 	}

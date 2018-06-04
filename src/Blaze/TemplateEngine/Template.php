@@ -27,12 +27,22 @@
 		}
 
 		/**
-		* Sets the template location
+		* Set the template location
 		* @param string $location
+		* @return void
 		*/
 		final protected function setLocation (string $location)
 		{
 			$this->location = $location;
+		}
+
+		/**
+		* Get the template location
+		* @return string
+		*/
+		final protected function getLocation () : string
+		{
+        	return empty($this->location) ? getConstant("TEMPLATE") : $this->location;
 		}
 
 		/**
@@ -50,7 +60,7 @@
 		*/
 		final protected function setFileLocation (string $file)
 		{
-	        $file 		= $this->location.$file;
+	        $file 		= $this->getLocation().$file;
 	        $pathParts  = pathinfo($file);
 	        $this->file = !isset($pathParts['extension']) ? $file.".inc" : $file;
 		}

@@ -47,7 +47,7 @@
 		*/
 		final public function openConnection ()
 		{
-			$this->connection 	= mysqli_connect(DB_HOST, DB_USERNAME, DB_PASSWORD, DB_NAME);
+			$this->connection 	= mysqli_connect(getConstant('DB_HOST'), getConstant('DB_USERNAME'), getConstant('DB_PASSWORD'), getConstant('DB_NAME'));
 			$errorMessage 		= "Database connection failed: ".mysqli_connect_error();
 			$errorMessage 	   .= " (" .mysqli_connect_errno(). ")";
 			if (!$this->connection) die($errorMessage);

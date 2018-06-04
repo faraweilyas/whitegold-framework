@@ -17,8 +17,7 @@
     		"Blaze\\": "src/Blaze"
     	},
         "files": [
-            "src/Blaze/Bootstrap/Helper.php",
-            "src/Blaze/Bootstrap/Config.php"
+            "src/Blaze/Bootstrap/Helper.php"
         ]
     },
     "require": {

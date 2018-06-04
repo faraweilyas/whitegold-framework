@@ -25,7 +25,7 @@
 
 		protected $fileExtension;
 		protected $allowedFIleSize 	= 5242880;
-		protected $uploadDir 		= UPLOAD;
+		protected $uploadDir;
 		protected $uploadFileDir 	= "";
 
 		public $error;
@@ -100,10 +100,20 @@
         /**
         * Set the upload dir.
         * @param string $uploadDir
+		* @return void
         */
         public function setUploadDir (string $uploadDir)
         {
         	$this->uploadDir = $uploadDir;
+        }
+
+        /**
+        * Get the upload dir.
+		* @return string
+        */
+        public function getUploadDir () : string
+        {
+        	return empty($this->uploadDir) ? getConstant("UPLOAD") : $this->uploadDir;
         }
 
         /**
@@ -220,7 +230,7 @@
 		protected function uploadFile () : bool
 		{
 			// Determine the destination
-			$this->newFileLocation = $this->uploadDir.$this->uploadFileDir.DS.$this->newFileName;			  
+			$this->newFileLocation = $this->getUploadDir().$this->uploadFileDir.getConstant('DS').$this->newFileName;			  
 			// Make sure a file doesn't already exist in the target location
 			if (file_exists($this->newFileLocation)):
 				$this->error = "The file {$this->newFileLocation} already exists.";

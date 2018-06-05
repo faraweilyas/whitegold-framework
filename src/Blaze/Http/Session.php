@@ -48,7 +48,7 @@
         */
         public function __construct () 
         {
-            $this->cofigureSession("domain", MASTER_DOMAIN);
+            $this->cofigureSession("domain", getConstant("MASTER_DOMAIN"));
             $this->initialize();
             $this->checkLogin();
             $this->setMaxElapsed($this->getMaxElapsed());

@@ -42,7 +42,7 @@
 		*/
 		final protected function getLocation () : string
 		{
-        	return empty($this->location) ? getConstant("TEMPLATE") : $this->location;
+        	return empty($this->location) ? getConstant("TEMPLATE", TRUE) : $this->location;
 		}
 
 		/**

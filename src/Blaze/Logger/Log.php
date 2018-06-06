@@ -37,7 +37,7 @@
 		{
 			$this->message 	= $message;
 			$this->level 	= strtoupper($level);
-			$this->logDir 	= getConstant("LOG");
+			$this->logDir 	= getConstant("LOG", TRUE);
 		}
 
 		/**

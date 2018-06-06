@@ -179,14 +179,14 @@
 		public static function testExample ()
 		{
             $SMTPConfig	= Mail::setSMTP(
-            	getConstant("MAIL_HOST"),
-            	getConstant("MAIL_USERNAME"),
-            	getConstant("MAIL_PASSWORD"),
-            	getConstant("MAIL_SMTPSECURE"),
-            	(int) getConstant("MAIL_PORT")
+            	getConstant("MAIL_HOST", TRUE),
+            	getConstant("MAIL_USERNAME", TRUE),
+            	getConstant("MAIL_PASSWORD", TRUE),
+            	getConstant("MAIL_SMTPSECURE", TRUE),
+            	(int) getConstant("MAIL_PORT", TRUE)
            	);
-            $to         = Mail::setEmail(getConstant("MAIL_USERNAME"), "To Tester");
-            $from       = Mail::setEmail(getConstant("MAIL_USERNAME"), "From Tester");
+            $to         = Mail::setEmail(getConstant("MAIL_USERNAME", TRUE), "To Tester");
+            $from       = Mail::setEmail(getConstant("MAIL_USERNAME", TRUE), "From Tester");
             $emailBody	= Mail::setBody("Message Subject", "Message Body");
             // var_dump(Mail::sendEmail($emailBody, $to, $from, $from, $SMTPConfig));
             // var_dump(static::$result, static::$errorMessage);

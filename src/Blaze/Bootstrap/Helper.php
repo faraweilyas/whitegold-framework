@@ -215,7 +215,7 @@
             $newDirs        = [];
             if (empty($dirContents)) return [];
             foreach ($dirContents as $dirContent):
-                $newDir = $dir.$dirContent.getConstant('DS');
+                $newDir = $dir.$dirContent.getConstant('DS', TRUE);
                 if (is_dir($newDir)):
                     $newDirs[]  = $newDir;
                     $result     = scanDirInDir($newDir);
@@ -237,7 +237,7 @@
             $dirContents = array_diff(dirScanner($dir), ['.', '..']);
             $directories = [];
             foreach ($dirContents as $dirContent):
-                if (is_dir($dir.$dirContent.getConstant('DS'))) $directories[] = $dirContent;
+                if (is_dir($dir.$dirContent.getConstant('DS', TRUE))) $directories[] = $dirContent;
             endforeach;
             return array_diff($dirContents, $directories);
         }
@@ -921,4 +921,3 @@
             return $newObject;
         }
     endif;
-        

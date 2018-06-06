@@ -70,20 +70,21 @@
 		*/
 		final protected static function validateRequestedRoute ()
 		{
-			if (static::routeMatch()) {
+			if (static::routeMatch()):
 				$matched_route 	= static::$_matchedRoute['route'];
 				$method 		= static::$_methods[static::$_matchedRoute['method_key']];
-				if (!static::caller($method)) echo "Caller Error";
-			} else {
-				if (!file_exists(getConstant('VIEW').'AppStates/404.php'))
-				{
+				if (!static::caller($method)):
+					echo "Caller Error";
+				endif;
+			else:
+				if (!file_exists(getConstant('VIEW', TRUE).'AppStates/404.php')):
 					$message  = "404 Error Found: cause the requested page wasn't found. <br />";
 					$message .= "If you're the admin you can specify your 404 Error file in your ";
-					$message .= "'".getConstant('VIEW')."AppStates/' directory and name it '404.php'";
+					$message .= "'".getConstant('VIEW', TRUE)."AppStates/' directory and name it '404.php'";
 					print $message; exit;
-				}
+				endif;
 				RouterView::make("AppStates.404");
-			}
+			endif;
 		}
 
 		/**
@@ -92,12 +93,11 @@
 		final protected static function checkAppState ()
 		{
 			if (!getConstant('UNDER_CONSTRUCTION')) return;
-			if (!file_exists(getConstant('VIEW').'AppStates/UC.php'))
-			{
+			if (!file_exists(getConstant('VIEW', TRUE).'AppStates/UC.php')):
 				$message  = "The APP is in maintenance mode. <br />If you're the admin you can specify your maintenance file in your ";
-				$message .= "'".getConstant('VIEW')."AppStates/' directory and name it 'UC.php'";
+				$message .= "'".getConstant('VIEW', TRUE)."AppStates/' directory and name it 'UC.php'";
 				print $message; exit;
-			}
+			endif;
 			RouterView::make('AppStates.UC');
 			exit;			
 		}

@@ -41,7 +41,7 @@
 				if (!empty($variables)) self::with($variables);
 		        extract($GLOBALS, EXTR_OVERWRITE);
 				extract(static::$passedVariables, EXTR_OVERWRITE);
-				require APP."Initializers.php";
+				require getConstant("BOOTSTRAP", TRUE)."Initializers.php";
 				require_once $fileLocation;
 				ob_end_flush();
 				// print ob_get_clean();

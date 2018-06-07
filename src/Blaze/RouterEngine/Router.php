@@ -42,7 +42,10 @@
 		*/
 		final protected static function getUrl ()
 		{
-			static::$route 	= $url = (isset($_GET['url']) AND !empty($_GET['url'])) ? "/".$_GET['url'] : '/';
+			$requestUri = (php_sapi_name() === 'cli-server')
+						? urldecode(parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH))
+						: "/".($_GET['url'] ?? "");
+			static::$route 	= $url = (isset($requestUri) AND !empty($requestUri)) ? $requestUri : '/';
 			$length 		= strlen($url);
 			$dirSlash 		= substr($url, $length-1);
 			if ($dirSlash == "/" AND $url != "/") $url = substr($url, 0, $length-1);

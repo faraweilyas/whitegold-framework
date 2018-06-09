@@ -88,7 +88,7 @@
     	* @param bool $return
     	* @return mixed
     	*/
-        function __file ($file='', bool $return=FALSE)
+        function __file ($file='', bool $return=TRUE)
         {
             return Route::_file($file, $return);
         }
@@ -101,7 +101,7 @@
     	* @param bool $return
     	* @return mixed
     	*/
-        function __url ($url='', bool $return=FALSE)
+        function __url ($url='', bool $return=TRUE)
         {
             return Route::_url($url, $return);
         }

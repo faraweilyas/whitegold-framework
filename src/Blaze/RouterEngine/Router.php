@@ -118,9 +118,9 @@
 		* It calls the route helper for proper file inclusion for HTML.
 		* @param string $file
 		* @param bool $return
-		* @return mixed
+		* @return string
 		*/
-		final public static function _file (string $file, bool $return=FALSE)
+		final public static function _file (string $file, bool $return=TRUE) : string
 		{
 			return static::routeDriver($file, $return);
 		}
@@ -129,9 +129,9 @@
 		* It calls the route helper for proper url linking for HTML.
 		* @param string $url
 		* @param bool $return
-		* @return mixed
+		* @return string
 		*/
-		final public static function _url (string $url, bool $return=FALSE)
+		final public static function _url (string $url, bool $return=TRUE) : string
 		{
 			return static::routeDriver($url, $return);
 		}
@@ -140,9 +140,9 @@
 		* It calls the route helper for proper redirection.
 		* @param string $route
 		* @param bool $return
-		* @return mixed
+		* @return string
 		*/
-		final public static function redirectRoute (string $route, bool $return=TRUE)
+		final public static function redirectRoute (string $route, bool $return=TRUE) : string
 		{
 			return static::routeDriver($route, $return);
 		}

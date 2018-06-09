@@ -378,20 +378,19 @@
 			endif;
 			return $route;
 		}
-
+		
 		/**
 		* Checks route for analyzing for FILE, URL, REDIRECTION in HTML.
 		* @param string $value
 		* @param bool $return
-		* @return mixed
+		* @return string
 		*/
-		final protected static function routeDriver (string $value, bool $return=FALSE)
+		final protected static function routeDriver (string $value, bool $return=TRUE) : string
 		{
-			if ($return === TRUE)
-				return static::routeHelper($value);
-			else
-				echo static::routeHelper($value);
-			return;
+			if (!$return):
+				print static::routeHelper($value);
+			endif;
+			return static::routeHelper($value);
 		}
 
 		/**

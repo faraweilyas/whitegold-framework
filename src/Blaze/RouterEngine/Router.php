@@ -38,16 +38,25 @@
 		}
 
 		/**
+		* Returns current requested route.
+		* @return string
+		*/
+		final public static function getRequestedRoute () : string
+		{
+			return (php_sapi_name() === 'cli-server')
+					? urldecode(parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH))
+					: "/".($_GET['url'] ?? "");
+		}
+
+		/**
 		* It gets the get url parameter passed from the RewriteEngine in HTACCESS file.
 		*/
 		final protected static function getUrl ()
 		{
-			$requestUri = (php_sapi_name() === 'cli-server')
-						? urldecode(parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH))
-						: "/".($_GET['url'] ?? "");
+			$requestUri 	= static::getRequestedRoute();
 			static::$route 	= $url = (isset($requestUri) AND !empty($requestUri)) ? $requestUri : '/';
 			$length 		= strlen($url);
-			$dirSlash 		= substr($url, $length-1);
+			$dirSlash 		= substr($url, $length - 1);
 			if ($dirSlash == "/" AND $url != "/") $url = substr($url, 0, $length-1);
 			static::$_getRoute 	= $url;
 			static::$_pattern 	= "#^$url$#";

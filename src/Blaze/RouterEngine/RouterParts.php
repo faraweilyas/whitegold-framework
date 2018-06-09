@@ -67,12 +67,12 @@
 	        	$matchedRoutes = static::checkMatchedRoutes($matchedRoutes);
 
 			static::setVariables();
-			if (!empty($matchedRoutes)) {
+			if (!empty($matchedRoutes)):
 				static::$_matchedRoute = [
 					"route" 		=> $matchedRoutes[key($matchedRoutes)], 
 					"method_key" 	=> key($matchedRoutes)
 				];
-			}
+			endif;
 			return (!empty($matchedRoutes)) ? TRUE : FALSE;
 		}
 
@@ -84,20 +84,18 @@
 		{
 			$matchedRoute = ''; $methodKey = '';		
 			foreach (static::$_uri as $key => $route):
-				if (@preg_match(static::$_pattern, $route))
-				{
+				if (@preg_match(static::$_pattern, $route)):
 					$matchedRoute 	= $route;
 					$methodKey 		= $key;
-				}
+				endif;
 			endforeach;
-			if (Validate::hasValue($matchedRoute, $methodKey))
-			{
+			if (Validate::hasValue($matchedRoute, $methodKey)):
 				static::$_matchedRoute = [
 					"route" 		=> $matchedRoute,
 					"method_key" 	=> $methodKey
 				];
 				return TRUE;
-			}
+			endif;
 			return FALSE;
 		}
 
@@ -110,18 +108,16 @@
 			$requestedRouteOrder 	= "";
 			$requestedRouteUris 	= static::uriGenerator(static::$_getRoute);
 			$keyRoutes 				= static::explodeRoutes();
-			foreach ($requestedRouteUris as $requestedUri)
-			{
-				if (Validate::hasValue($requestedUri))
-				{
+			foreach ($requestedRouteUris as $requestedUri):
+				if (Validate::hasValue($requestedUri)):
 					if (in_array($requestedUri, $keyRoutes)) 
 						$requestedRouteOrder .= "Route ";
 					elseif ($requestedUri == "/") 
 						$requestedRouteOrder .= "";
 					else
 						$requestedRouteOrder .= "Variable ";
-				}
-			}
+				endif;
+			endforeach;
 			return trim($requestedRouteOrder);
 		}
 		
@@ -133,12 +129,11 @@
 		{
 			$matchedRoutes 		= [];	
 			$requestedUris 		= array_filter(explode("/", static::$_getRoute));
-			foreach (static::$_uri as $key => $uri)
-			{
+			foreach (static::$_uri as $key => $uri):
 				$registeredUris = array_filter(explode("/", $uri));
 				if (count($registeredUris) == count($requestedUris))
 					if (!in_array($uri, $matchedRoutes)) $matchedRoutes[$key] = $uri;
-			}
+			endforeach;
 			return $matchedRoutes;
 		}
 
@@ -164,16 +159,14 @@
 		{
 			$routeOrder = "";
 			$routeUris 	= static::uriGenerator($route);
-			foreach ($routeUris as $uri)
-			{
-				if (Validate::hasValue($uri))
-				{
+			foreach ($routeUris as $uri):
+				if (Validate::hasValue($uri)):
 					if ((stripos($uri, "{") !== FALSE) AND (stripos($uri, "}") !== FALSE))
 						$routeOrder .= "Variable ";
 					else
 						$routeOrder .= "Route ";
-				}
-			}
+				endif;
+			endforeach;
 			return trim($routeOrder);
 		}
 
@@ -189,14 +182,12 @@
 	        $getRoute 			= static::uriCommaAnalyzer($routes);
 			$definedRoutes		= static::defineRouteVariable($routes);
 
-	    	foreach ($definedRoutes as $key => $route)
-	    	{						
-				if (@preg_match("#^$getRoute$#", $route))
-				{
+	    	foreach ($definedRoutes as $key => $route):
+				if (@preg_match("#^$getRoute$#", $route)):
 					if (!in_array($routes[$key], $finalMatch))
 						$finalMatch[$key] = $routes[$key];
-				}
-	    	}
+				endif;
+	    	endforeach;
 	    	return $finalMatch;
 		}
 
@@ -210,13 +201,11 @@
 			$uris 		= array_filter(explode("/", static::$_getRoute));
 			$keyRoutes 	= static::explodeRoutes($routes);
 			$getRoute 	= "";
-
-	        foreach ($uris as $uri)
-	        {
+	        foreach ($uris as $uri):
 				if (Validate::hasValue($uri))
 					if (in_array($uri, $keyRoutes)) $getRoute .= "$uri,";
-	        }
-	        return substr($getRoute, 0, strlen($getRoute)-1);
+	        endforeach;
+	        return substr($getRoute, 0, strlen($getRoute) - 1);
 		}
 
 		/**
@@ -227,25 +216,23 @@
 		final protected static function defineRouteVariable (array $routes) : array
 		{
 			$definedRoutes = [];
-	        foreach ($routes as $key => $route)
-	        {
+	        foreach ($routes as $key => $route):
 	        	$route 			= array_filter(explode("/", $route)); 
 	        	$matchedRoutes 	= [];
-	        	foreach ($route as $uri)
-	        	{
-					if (Validate::hasValue($uri))
-					{
+	        	foreach ($route as $uri):
+					if (Validate::hasValue($uri)):
 						if ((stripos($uri, "{") == FALSE) AND (stripos($uri, "}") == FALSE))
 							$matchedRoutes[] = $uri;
-					}
-	        	}
+					endif;
+		        endforeach;
 	        	$definedRoutes[$key] = implode(",", $matchedRoutes);
-	        }
+	        endforeach;
 	        return $definedRoutes;
 		}
 
 		/**
 		* Sets variables from requested route for argument parsing.
+		* @return void
 		*/
 		final protected static function setVariables ()
 		{
@@ -254,38 +241,37 @@
 			$defined  		= array_filter(explode(" ", $definedRoute));
 			$route 			= substr(static::$_getRoute, 1);
 			$uris 			= (stripos($route, "/") != FALSE) ? array_filter(explode("/", $route)) : [$route];
-			foreach ($uris as $key => $uri)
-			{
+			foreach ($uris as $key => $uri):
 				if (Validate::hasValue($uri))
 					if ($defined[$key] != "Route") $variables[] = $uri;
-			}
+			endforeach;
 			static::$_arguments = $variables;
 		}
 
 		/**
 		* Finds appropraite method to call from the registered methods.
 		* @param mixed $method
+		* @return bool
 		*/
-		final protected static function caller ($method)
+		final protected static function caller ($method) : bool
 		{
 			if (empty($method)) return FALSE;
 
-			if (is_callable($method))
-			{
+			if (is_callable($method)):
 				static::callClosure($method); 
 				return TRUE;
-			}
-			if (is_string($method))
-			{
+			endif;
+			if (is_string($method)):
 				static::callWorker($method); 
 				return TRUE;
-			}
+			endif;
 			return FALSE;
 		}
 
 		/**
 		* Calls annonymous functions sepcified in the route.
 		* @param callable $method
+		* @return void
 		*/
 		final protected static function callClosure (callable $method=NULL)
 		{
@@ -309,6 +295,7 @@
 		/**
 		* Calls class and method sepcified for the requested route.
 		* @param string $classMethod
+		* @return void
 		*/
 		final protected static function callWorker (string $classMethod=NULL)
 		{
@@ -382,17 +369,13 @@
 		*/
 		final protected static function routeHelper (string $route) : string
 		{
-			if (empty(static::$route))
-				static::$route 	= (isset($_GET['url']) AND !empty($_GET['url'])) ? "/".$_GET['url'] : '/';
-			$occurences = substr_count(static::$route, "/");
-			if ($occurences > 1 AND Validate::hasValue($route))
-			{
-				$route 	= substr($route, 2);
-				$prefix = "../";
-				$index	= $occurences - 1;
-				for ($i=1; $i <= $index; $i++) $route = $prefix.$route;
+			static::$route 	= empty(static::$route) ? static::getRequestedRoute() : static::$route;
+			$occurences 	= substr_count(static::$route, "/");
+			if ($occurences > 1 AND Validate::hasValue($route)):
+				$route = substr($route, strlen(getConstant("ROOT", TRUE)));
+				for ($i = 1; $i <= ($occurences - 1); $i++) $route = "../".$route;
 				return $route;
-			}
+			endif;
 			return $route;
 		}
 
@@ -413,6 +396,7 @@
 
 		/**
 		* Debugger that shows steps on how router works for developers.
+		* @return void
 		*/
 		public static function _DEBUG ()
 		{

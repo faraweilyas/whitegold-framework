@@ -245,20 +245,25 @@
 
     if (!function_exists('renameFileExtention')):
         /**
-        * Renames files in a dir based on extension specified
+        * Rename files in a dir based on extension specified
         * @param string $dir
         * @param string $extension
         * @param string $newExtension
+        * @param \Closure $processNamecallBack
         * @return bool
         */
-        function renameFileExtention (string $dir, string $extension, string $newExtension) : bool
+        function renameFilesExtention (string $dir=NULL, string $extension=NULL, string $newExtension=NULL, \Closure $processNamecallBack=NULL) : bool
         {
             $fileNames = getFiles($dir);
             foreach ($fileNames as $fileName):
-                $pathParts      = pathinfo($fileName);
-                $fileExtension  = $pathParts['extension'] ?? "";
-                if ($extension == $fileExtension):
-                    $newFileName = $pathParts['filename'].".$newExtension";
+                $pathParts = pathinfo($fileName);
+                if ($extension == $pathParts['extension']):
+                    $pathFileName = $pathParts['filename'];
+                    if (is_callable($processNamecallBack)):
+                        $pathFileName   = empty($processNamecallBack($pathFileName))
+                                        ? $pathFileName : $processNamecallBack($pathFileName);
+                    endif;
+                    $newFileName = $pathFileName.".$newExtension";
                     rename($dir.$fileName, $dir.$newFileName);
                 endif;
             endforeach;

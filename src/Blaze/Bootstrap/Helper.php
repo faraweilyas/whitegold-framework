@@ -257,8 +257,8 @@
             $fileNames = getFiles($dir);
             foreach ($fileNames as $fileName):
                 $pathParts = pathinfo($fileName);
-                if ($extension == $pathParts['extension']):
-                    $pathFileName = $pathParts['filename'];
+                if ($extension == ($pathParts['extension'] ?? "")):
+                    $pathFileName = ($pathParts['filename'] ?? "");
                     if (is_callable($processNamecallBack)):
                         $pathFileName   = empty($processNamecallBack($pathFileName))
                                         ? $pathFileName : $processNamecallBack($pathFileName);

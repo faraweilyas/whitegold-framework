@@ -118,16 +118,15 @@
         {
             extract($GLOBALS, EXTR_OVERWRITE);
             extract($definedVars, EXTR_OVERWRITE);
-            $layoutFile = LAYOUT.str_replace(".", "/", $layoutFile);
+            $layoutFile = getConstant("LAYOUT").str_replace(".", "/", $layoutFile);
             $pathParts  = pathinfo($layoutFile);
             $layoutFile = !isset($pathParts['extension']) ? $layoutFile.".inc" : $layoutFile;
-            if (!file_exists($layoutFile))
-            {
+            if (!file_exists($layoutFile)):
                 print $layoutFile.": File was not found!";
-                return false;
-            }
+                return FALSE;
+            endif;
             require_once $layoutFile;
-            return true;
+            return TRUE;
         }
     endif;
 

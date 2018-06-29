@@ -117,7 +117,7 @@
         function layout (string $layoutFile=NULL, array $definedVars=[]) : bool
         {
             extract($GLOBALS, EXTR_OVERWRITE);
-            extract($definedVars, EXTR_OVERWRITE);
+            extract($definedVars, EXTR_SKIP);
             $layoutFile = getConstant("LAYOUT").str_replace(".", "/", $layoutFile);
             $pathParts  = pathinfo($layoutFile);
             $layoutFile = !isset($pathParts['extension']) ? $layoutFile.".inc" : $layoutFile;

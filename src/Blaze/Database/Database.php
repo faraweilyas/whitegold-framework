@@ -22,17 +22,6 @@
 
 		// Store the single instance.
 		private static $instance;
-
-        /**
-        * Get an instance of the Database.
-        * @return Database
-        */
-		public static function getInstance () : Database
-		{
-			if (!static::$instance) 
-				static::$instance = new static;
-			return static::$instance;
-		}
 		
 		/**
 		* Open connection on instansiation.
@@ -56,6 +45,17 @@
 			$errorMessage 	= "Database connection failed: ".mysqli_connect_error();
 			$errorMessage 	.= " (" .mysqli_connect_errno(). ")";
 			if (!$this->connection) die($errorMessage);
+		}
+
+        /**
+        * Get an instance of the Database.
+        * @return Database
+        */
+		public static function getInstance () : Database
+		{
+			if (!static::$instance) 
+				static::$instance = new static;
+			return static::$instance;
 		}
 
 		/**

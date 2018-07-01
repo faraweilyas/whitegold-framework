@@ -13,8 +13,16 @@
 	abstract class Template
 	{			
 		private $file;
-		private $location 			= TEMPLATE;
+		private $location;
 		private $assignedVariables 	= [];
+		
+		/**
+		* Open connection on instansiation.
+		*/
+		public function __construct ()
+		{
+		    $this->location = getConstant("TEMPLATE", TRUE);
+		}
 
 		/**
 		* Sets the assignedVariables
@@ -40,7 +48,7 @@
 		* Get the template location
 		* @return string
 		*/
-		final protected function getLocation () : string
+		final public function getLocation () : string
 		{
         	return empty($this->location) ? getConstant("TEMPLATE", TRUE) : $this->location;
 		}

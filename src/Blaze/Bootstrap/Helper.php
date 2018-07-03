@@ -499,6 +499,19 @@
         }
     endif;
 
+    if (!function_exists('getHostFile')):
+        /**
+        * Get file's full path on server
+        * @param string $fileDir
+        * @param string $file
+        * @return string
+        */
+        function getHostFile (string $fileDir, string $file) : string
+        {
+            return getHost().str_replace('.', '', $fileDir).$file;
+        }
+    endif;
+
     if (!function_exists('getSiteURL')):
         /**
         * Gets Site URL.

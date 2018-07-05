@@ -85,7 +85,7 @@
 				foreach ($this->assignedVariables as $key => $value) 
 					$output = preg_replace('/{'.$key.'}/', $value, $output);
 			else:
-				$output = "*** Missing template error ***";
+				$output = "*** Missing template error: {$this->file} ***";
 			endif;
 
 			if ($return)

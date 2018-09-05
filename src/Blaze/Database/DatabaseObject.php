@@ -249,6 +249,25 @@
 		}
 
 		/**
+		* Find where a given column is equal to a given value (Multiple Columns).
+		* $columnsValues takes an assoc array.
+		* @param array $columnsValues
+		* @param string $expression
+		* @return mixed
+		*/
+		public static function findMultipleColumn (array $columnsValues, string $expression="AND")
+		{
+            $dbObject  		= Database::getInstance();
+            $columnsValues 	= $dbObject->escapeValues($columnsValues);
+			$attributePairs = static::generateKeyValue($columnsValues);
+			if (!static::isExpressionValid($expression)) $expression = "AND";
+			$sqlQuery  		= "SELECT * FROM ".static::$tableName." WHERE ";
+			$sqlQuery 	   .= join(" $expression ", $attributePairs)." LIMIT 1";
+			$resultArray 	= static::findBySql($sqlQuery);
+			return !empty($resultArray) ? array_shift($resultArray) : FALSE;
+		}
+
+		/**
 		* Find where a given column is equal to a given value.
 		* @param string $column
 		* @param string $value

@@ -46,13 +46,12 @@
 		/**
 		* Validate request.
 		* @param string $requestType
-		* @param bool $isStrict
 		* @return bool
 		*/
-		public function checkRequestType (string $requestType, bool $isStrict=TRUE) : bool
+		public function checkRequestType (string $requestType) : bool
 		{
 			if (!$this->requestType($requestType)) return FALSE;
-			if ($isStrict):
+			if (php_sapi_name() !== 'cli-server'):
 				if (!$this->requestIsSameDomain()) return FALSE;
 			endif;
 			return TRUE;

@@ -46,13 +46,13 @@
 		/**
 		* Validate request.
 		* @param string $requestType
-		* @param string $strict
+		* @param bool $isStrict
 		* @return bool
 		*/
-		public function checkRequestType (string $requestType, string $strict=TRUE) : bool
+		public function checkRequestType (string $requestType, bool $isStrict=TRUE) : bool
 		{
 			if (!$this->requestType($requestType)) return FALSE;
-			if ($strict):
+			if ($isStrict):
 				if (!$this->requestIsSameDomain()) return FALSE;
 			endif;
 			return TRUE;

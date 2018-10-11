@@ -631,22 +631,22 @@
         */
         function datetimeToText (string $datetime, string $format="fulldate") : string
         {
-            $unixdatetime 	= strtotime($datetime);
-            $dateFormat 	= "";
+            $unixdatetime   = strtotime($datetime);
+            $dateFormat     = "";
             switch (strtolower($format))
             {
-            	case 'fulldate':
-            		$dateFormat = "%d %B, %Y at %I:%M %p";
-            		break;
-            	case 'date':
-            		$dateFormat = "%m/%d/%Y";
-            		break;
-            	case 'mysql-date':
-            		$dateFormat = "%m-%d-%Y";
+                case 'fulldate':
+                    $dateFormat = "%d %B, %Y at %I:%M %p";
+                    break;
+                case 'date':
+                    $dateFormat = "%m/%d/%Y";
+                    break;
+                case 'mysql-date':
+                    $dateFormat = "%m-%d-%Y";
                     break;
                 case 'customd':
                     $dateFormat = "%d %B. %Y";
-            		break;
+                    break;
                 case 'customdate':
                     $dateFormat = "%d %b. %Y";
                     break;
@@ -656,12 +656,12 @@
                 case 'monthyear':
                     $dateFormat = "%b. %Y";
                     break;
-            	case 'time':
-            		$dateFormat = "%I:%M %p";
-            		break;
-            	case 'datetime':
-            		$dateFormat = "%m/%d/%Y %H:%M:%S %p";
-            		break;
+                case 'time':
+                    $dateFormat = "%I:%M %p";
+                    break;
+                case 'datetime':
+                    $dateFormat = "%m/%d/%Y %H:%M:%S %p";
+                    break;
                 case 'datefm':
                     $dateFormat = "%d/%m/%Y";
                     break;
@@ -671,24 +671,24 @@
                 case 'datef':
                     $dateFormat = "%d/%m/%Y %H:%M:%S %p";
                     break;
-            	case 'mysql-datetime':
-            		$dateFormat = "%m-%d-%Y %H:%M:%S";
-            		break;
-            	case 'word-datetime':
-            		$dateFormat = "%a %d %b %H:%M %p";
-            		break; 
-            	case 'word-date':
-            		$dateFormat = "%a %d %b %Y";
-            		break;
-            	case 'fullday':
-            		$dateFormat = "%A";
-            		break;
-            	case 'day':
-            		$dateFormat = "%a";
-            		break;		
-            	default:
-            		$dateFormat = "%B %d, %Y at %I:%M %p";
-            		break;
+                case 'mysql-datetime':
+                    $dateFormat = "%m-%d-%Y %H:%M:%S";
+                    break;
+                case 'word-datetime':
+                    $dateFormat = "%a %d %b %I:%M %p";
+                    break; 
+                case 'word-date':
+                    $dateFormat = "%d %b %Y";
+                    break;
+                case 'fullday':
+                    $dateFormat = "%A";
+                    break;
+                case 'day':
+                    $dateFormat = "%a";
+                    break;      
+                default:
+                    $dateFormat = "%B %d, %Y at %I:%M %p";
+                    break;
             }
             return strftime($dateFormat, $unixdatetime);
         }

@@ -2,7 +2,7 @@
     "name": "faraweilyas/whitegold-framework",
     "type": "library",
     "description": "The whiteGold mini PHP framework",
-    "keywords": ["php", "mini", "framework", "library"],
+    "keywords": ["php", "mini", "framework", "library", "whitegold-framework"],
     "homepage": "https://github.com/faraweilyas/whitegold-framework",
     "license": "MIT",
     "authors": [

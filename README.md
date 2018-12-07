@@ -1,6 +1,6 @@
 ## About whiteGold
 
-> **Note:** This repository contains the core code of the whiteGold framework. If you want to build an application using whiteGold, visit the main [whiteGold repository](https://github.com/whytegold/whitegold).
+> **Note:** This repository contains the core code of the whiteGold framework. If you want to build an application using whiteGold, visit the main [whiteGold repository](https://github.com/faraweilyas/whitegold).
 
 whiteGold is a PHP light web application framework with sophisticated syntax and this is inspired by the [Laravel Framework](https://laravel.com) with the aim to ease the way components are being installed alongside our project which disrupts scaling and development process. whiteGold attempts to tackle this by tearing down components to make them stand alone so it's easy to remove, add and update different components at any point in time.
 

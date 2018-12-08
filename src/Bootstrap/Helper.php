@@ -235,12 +235,14 @@ if (!function_exists('getFiles')):
 	*/
 	function getFiles (string $dir=NULL) : array
 	{
-		$dirContents = array_diff(dirScanner($dir), ['.', '..']);
-		$directories = [];
+		$dir 			= substr($dir, strlen($dir) - 1) == "/" ? $dir : $dir."/";
+		$dirContents 	= array_diff(dirScanner($dir), ['.', '..']);
+		$files 			= [];
 		foreach ($dirContents as $dirContent):
-			if (is_dir($dir.$dirContent.getConstant('DS', TRUE))) $directories[] = $dirContent;
+			$file = $dir.$dirContent;
+			if (is_file($file) && file_exists($file)) $files[] = $dirContent;
 		endforeach;
-		return array_diff($dirContents, $directories);
+		return $files;
 	}
 endif;
 

@@ -31,8 +31,18 @@ abstract class SessionHelper
     */
     protected function initialize ()
     {
-        $this->setSessionConfig();
         $this->startSession();
+    }
+
+    /**
+    * Starts session.
+    */
+    protected function startSession ()
+    {
+        if (session_status() == PHP_SESSION_NONE):
+	        $this->setSessionConfig();
+        	session_start();
+        endif;
     }
 
     /**
@@ -68,14 +78,6 @@ abstract class SessionHelper
         if (!in_array(strtolower($name), $allowedProperties)) return FALSE;
         $this->$name = $value;                
         return TRUE;
-    }
-
-    /**
-    * Starts session.
-    */
-    protected function startSession ()
-    {
-        if (session_status() == PHP_SESSION_NONE) session_start();
     }
 
     /**

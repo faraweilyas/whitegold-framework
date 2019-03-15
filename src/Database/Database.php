@@ -112,9 +112,7 @@ class Database
 		$sanitizedValues = [];
 		foreach ($values as $key => $value):
 			$key 					= $this->escapeValue($key);
-			$sanitizedValues[$key]  = (is_array($value))
-									? [$this->escapeValue($value[0]), $this->escapeValue($value[1])]
-									: $this->escapeValue($value);
+			$sanitizedValues[$key]  = (is_array($value)) ? $this->escapeValues($value) : $this->escapeValue($value);
 		endforeach;
 		return $sanitizedValues;
 	}

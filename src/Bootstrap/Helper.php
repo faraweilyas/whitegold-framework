@@ -748,7 +748,8 @@ if (!function_exists('futureTime')):
 		$dateFormat         = "%a, %d %B";
 		$wordPresentation   = "";
 
-		switch ($date) {
+		switch ($date)
+		{
 			case date('Y/m/d'):
 				$wordPresentation = 'Today';
 				break;
@@ -793,7 +794,8 @@ if (!function_exists('backInTime')):
 		$dateFormat         = "%a, %d %B";
 		$wordPresentation   = "";
 
-		switch ($date) {
+		switch ($date)
+		{
 			case date('Y/m/d'):
 				$wordPresentation = 'Today';
 				break;
@@ -940,5 +942,20 @@ if (!function_exists('filterObject')):
 			if (in_array($object->$column, $values)) return $object;
 		}, $objects));
 		return $newObject;
+	}
+endif;
+
+if (!function_exists('joinArray')):
+	/**
+	* Join array values.
+	* @param array $values
+	* @param string $join
+	* @param string $preText
+	* @param string $postText
+	* @return string
+	*/
+	function joinArray (array $values, string $join, string $preText=NULL, string $postText=NULL) : string
+	{
+		return trim($preText.join($join, $values).$postText);
 	}
 endif;

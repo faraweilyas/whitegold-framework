@@ -128,6 +128,27 @@ class DatabaseParts
 	*/
 	final protected static function isExpressionValid (string $expression) : bool
 	{
-		return in_array(strtoupper($expression), ['AND', 'OR', 'NOT']);
+		return static::isOperatorValid($expression);
+	}
+
+	/**
+	* Checks if operator is valid.
+	* @param string $operator
+	* @return bool
+	*/
+	final protected static function isOperatorValid (string $operator) : bool
+	{
+		// Arithmetic Operators
+		$operators1 = ['+', '-', '*', '/', '%'];
+		// Bitwise Operators
+		$operators2 = ['&', '|', '^'];
+		// Comparison Operators
+		$operators3 = ['=', '<', '>', '>=', '<=', '<>'];
+		// Compound Operators
+		$operators4 = ['+=', '-=', '*=', '/=', '%=', '&=', '^-=', '|*='];
+		// Logical Operators
+		$operators5 = ['ALL', 'AND', 'ANY', 'BETWEEN', 'EXISTS', 'IN', 'LIKE', 'NOT', 'OR', 'SOME'];
+		$operators 	= array_merge($operators1, $operators2, $operators3, $operators4, $operators5);
+		return in_array(strtoupper($operator), $operators);
 	}
 }

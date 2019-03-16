@@ -50,6 +50,29 @@ class DatabaseParts
 	}
 
 	/**
+	* Checks if returned resultArray should return 1 element.
+	* @param string $sqlQuery
+	* @param int $limit
+	* @return mixed
+	*/
+	final public static function limitFindBySql (string $sqlQuery, int $limit=0)
+	{
+		$resultArray = static::findBySql($sqlQuery.static::limitQuery($limit));
+		if (empty($resultArray)) return FALSE;
+		return ($limit == 1) ? array_shift($resultArray) : $resultArray;
+	}
+
+	/**
+	* Generates limit query.
+	* @param int $limit
+	* @return string
+	*/
+	final public static function limitQuery (int $limit=0) : string
+	{
+		return ($limit > 0) ? " LIMIT {$limit}" : "";
+	}
+
+	/**
 	* Return an array of attribute names and their values.
 	* @return array
 	*/
@@ -80,6 +103,17 @@ class DatabaseParts
 	}
 
 	/**
+	* Checks if an object has given attribute.
+	* @param string $attribute
+	* @return bool
+	*/
+	final public function hasAttribute (string $attribute) : bool
+	{
+		$objectAttributes = $this->attributes();
+		return array_key_exists($attribute, $objectAttributes);
+	}
+
+	/**
 	* Validates the order for sqlQuery
 	* @param string $order
 	* @return string
@@ -93,42 +127,57 @@ class DatabaseParts
 	/**
 	* Generates keys and thier values for sqlQuery
 	* @param array $associativeArray
-	* @param string $expression
+	* @param string $operator
 	* @return array
 	*/
-	final protected static function generateKeyValue (array $associativeArray, string $expression="=") : array
+	final protected static function generateKeyValue (array $associativeArray, string $operator="=") : array
 	{
 		$generatedArray = [];
-		foreach ($associativeArray as $key => $value):
+        $dbObject 		= Database::getInstance();
+		foreach ($associativeArray as $column => $value):
+	        $column = $dbObject->escapeValue($column);
 	    	if (isset($value)):
-				if (is_array($value))
-					$generatedArray[] = "{$key} BETWEEN '{$value[0]}' AND '{$value[1]}'";
-				else
-					$generatedArray[] = "{$key}$expression'{$value}'";
+				$generatedArray[] = "{$column} ".static::generateValue($column, $value, $operator);
 			endif;
 		endforeach;
 		return $generatedArray;
 	}
 
 	/**
-	* Checks if an object has given attribute.
-	* @param string $attribute
-	* @return bool
+	* Generate values for sqlQuery based on the operator
+	* @param string $column
+	* @param mixed $value
+	* @param string $operator
+	* @return string
 	*/
-	final public function hasAttribute (string $attribute) : bool
+	final protected static function generateValue (string $column, $value, string $operator) : string
 	{
-		$objectAttributes = $this->attributes();
-		return array_key_exists($attribute, $objectAttributes);
-	}
-
-	/**
-	* Checks if expression is valid.
-	* @param string $expression
-	* @return bool
-	*/
-	final protected static function isExpressionValid (string $expression) : bool
-	{
-		return static::isOperatorValid($expression);
+        $dbObject 	= Database::getInstance();
+        $column 	= $dbObject->escapeValue($column);
+		if (is_array($value)):
+	        $values = $dbObject->escapeValues($value);
+			switch ($operator)
+			{
+				case 'BETWEEN':
+					$value = joinArray($values, "' AND '", "{$operator} '", "'");
+					break;
+				case 'IN':
+					$value = joinArray($values, "', '", "{$operator} ('", "')");
+					break;
+				case '=':
+				case '<':
+				case '<=':
+				case '>':
+				case '>=':
+				case '<>':
+				default:
+					$value = joinArray($values, "' OR {$column} {$operator} '", "{$operator} '", "'");
+					break;
+			}
+		else:
+	        $value = "{$operator} '".$dbObject->escapeValue($value)."'";
+		endif;
+		return $value;
 	}
 
 	/**
@@ -150,5 +199,26 @@ class DatabaseParts
 		$operators5 = ['ALL', 'AND', 'ANY', 'BETWEEN', 'EXISTS', 'IN', 'LIKE', 'NOT', 'OR', 'SOME'];
 		$operators 	= array_merge($operators1, $operators2, $operators3, $operators4, $operators5);
 		return in_array(strtoupper($operator), $operators);
+	}
+
+	/**
+	* Validates operator.
+	* @param string $operator
+	* @param string $defaultOperator
+	* @return string
+	*/
+	final protected static function validateOperator (string $operator, string $defaultOperator="=") : string
+	{
+		return static::isOperatorValid($operator) ? $operator : $defaultOperator;
+	}
+
+	/**
+	* Checks if expression is valid.
+	* @param string $expression
+	* @return bool
+	*/
+	final protected static function isExpressionValid (string $expression) : bool
+	{
+		return static::isOperatorValid($expression);
 	}
 }

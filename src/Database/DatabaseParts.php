@@ -2,9 +2,6 @@
 
 namespace Blaze\Database;
 
-use Blaze\Database\Database;
-use Blaze\Validation\FormValidator as FV;
-use Blaze\Validation\Validator as Validate;
 
 /**
 * whiteGold - mini PHP Framework
@@ -50,6 +47,29 @@ class DatabaseParts
 	}
 
 	/**
+	* Checks if returned resultArray should return 1 element.
+	* @param string $sqlQuery
+	* @param int $limit
+	* @return mixed
+	*/
+	final public static function limitFindBySql (string $sqlQuery, int $limit=0)
+	{
+		$resultArray = static::findBySql($sqlQuery.static::limitQuery($limit));
+		if (empty($resultArray)) return FALSE;
+		return ($limit == 1) ? array_shift($resultArray) : $resultArray;
+	}
+
+	/**
+	* Generates limit query.
+	* @param int $limit
+	* @return string
+	*/
+	final public static function limitQuery (int $limit=0) : string
+	{
+		return ($limit > 0) ? " LIMIT {$limit}" : "";
+	}
+
+	/**
 	* Return an array of attribute names and their values.
 	* @return array
 	*/
@@ -80,34 +100,17 @@ class DatabaseParts
 	}
 
 	/**
-	* Validates the order for sqlQuery
-	* @param string $order
+	* Generating sql query for update
+	* @param array
 	* @return string
 	*/
-	final protected static function validateOrder (string $order="DESC") : string
-	{
-		$order = strtoupper($order);
-		return (!in_array($order, ["DESC", "ASC"])) ? "DESC" : $order;
-	}
-
-	/**
-	* Generates keys and thier values for sqlQuery
-	* @param array $associativeArray
-	* @param string $expression
-	* @return array
-	*/
-	final protected static function generateKeyValue (array $associativeArray, string $expression="=") : array
+	final public function generateQueryForUPdate () : string
 	{
 		$generatedArray = [];
-		foreach ($associativeArray as $key => $value):
-	    	if (isset($value)):
-				if (is_array($value))
-					$generatedArray[] = "{$key} BETWEEN '{$value[0]}' AND '{$value[1]}'";
-				else
-					$generatedArray[] = "{$key}$expression'{$value}'";
-			endif;
+		foreach ($this->sanitizedAttributes() as $key => $value):
+			$generatedArray[] = "{$key} = '{$value}'";
 		endforeach;
-		return $generatedArray;
+		return joinArray($generatedArray, ", ");
 	}
 
 	/**
@@ -122,12 +125,113 @@ class DatabaseParts
 	}
 
 	/**
+	* Validates the order for sqlQuery
+	* @param string $order
+	* @return string
+	*/
+	final protected static function validateOrder (string $order="DESC") : string
+	{
+		$order = strtoupper($order);
+		return (!in_array($order, ["DESC", "ASC"])) ? "DESC" : $order;
+	}
+
+	/**
+	* Generates keys and thier values for sqlQuery
+	* @param array $associativeArray
+	* @param string $expressionOperator
+	* @return array
+	*/
+	final protected static function generateKeyValue (array $associativeArray, string $expressionOperator="AND") : array
+	{
+		$generatedArray = [];
+        $dbObject 		= Database::getInstance();
+		foreach ($associativeArray as $column => $operatorValues):
+	        $column = $dbObject->escapeValue($column);
+			$generatedArray[] = "{$column} ".static::generateValue($column, $operatorValues, $expressionOperator);
+		endforeach;
+		return $generatedArray;
+	}
+
+	/**
+	* Generate values for sqlQuery based on the operator
+	* @param string $column
+	* @param array $operatorValues
+	* @param string $expressionOperator
+	* @return string
+	*/
+	final protected static function generateValue (string $column, array $operatorValues, string $expressionOperator="AND") : string
+	{
+        $dbObject 			= Database::getInstance();
+        $column 			= $dbObject->escapeValue($column);
+		$operator 			= static::validateOperator(array_shift($operatorValues));
+        $values 			= $dbObject->escapeValues($operatorValues);
+		$expressionOperator = static::validateOperator($expressionOperator, "AND");
+		$expression 		= "";
+		if (count($values) > 1):
+			switch ($operator)
+			{
+				case 'BETWEEN':
+					$expression = joinArray($values, "' AND '", "{$operator} '", "'");
+					break;
+				case 'IN':
+					$expression = joinArray($values, "', '", "{$operator} ('", "')");
+					break;
+				case '=':
+				case '<':
+				case '<=':
+				case '>':
+				case '>=':
+				case '<>':
+				default:
+					$expression = joinArray($values, "' {$expressionOperator} {$column} {$operator} '", "{$operator} '", "'");
+					break;
+			}
+		else:
+	        $expression = "{$operator} '".$dbObject->escapeValue($values[0])."'";
+		endif;
+		return $expression;
+	}
+
+	/**
 	* Checks if expression is valid.
 	* @param string $expression
+	* @param string $defaultExpression
 	* @return bool
 	*/
-	final protected static function isExpressionValid (string $expression) : bool
+	final protected static function isExpressionValid (string $expression, string $defaultExpression="=") : bool
 	{
-		return in_array(strtoupper($expression), ['AND', 'OR', 'NOT']);
+		return static::validateOperator($expression, $defaultExpression);
+	}
+
+	/**
+	* Validates operator.
+	* @param string $operator
+	* @param string $defaultOperator
+	* @return string
+	*/
+	final protected static function validateOperator (string $operator, string $defaultOperator="=") : string
+	{
+		return static::isOperatorValid($operator) ? $operator : ($defaultOperator ?: '=');
+	}
+
+	/**
+	* Checks if operator is valid.
+	* @param string $operator
+	* @return bool
+	*/
+	final protected static function isOperatorValid (string $operator) : bool
+	{
+		// Arithmetic Operators
+		$operators1 = ['+', '-', '*', '/', '%'];
+		// Bitwise Operators
+		$operators2 = ['&', '|', '^'];
+		// Comparison Operators
+		$operators3 = ['=', '<', '>', '>=', '<=', '<>'];
+		// Compound Operators
+		$operators4 = ['+=', '-=', '*=', '/=', '%=', '&=', '^-=', '|*='];
+		// Logical Operators
+		$operators5 = ['ALL', 'AND', 'ANY', 'BETWEEN', 'EXISTS', 'IN', 'LIKE', 'NOT', 'OR', 'SOME'];
+		$operators 	= array_merge($operators1, $operators2, $operators3, $operators4, $operators5);
+		return in_array(strtoupper($operator), $operators);
 	}
 }

@@ -2,8 +2,7 @@
 
 namespace Blaze\Database;
 
-use Blaze\Database\Database;
-use Blaze\Logger\Log as FileLog;
+use Blaze\Logger\Log;
 
 /**
 * whiteGold - mini PHP Framework
@@ -112,9 +111,7 @@ class Database
 		$sanitizedValues = [];
 		foreach ($values as $key => $value):
 			$key 					= $this->escapeValue($key);
-			$sanitizedValues[$key]  = (is_array($value))
-									? [$this->escapeValue($value[0]), $this->escapeValue($value[1])]
-									: $this->escapeValue($value);
+			$sanitizedValues[$key]  = (is_array($value)) ? $this->escapeValues($value) : $this->escapeValue($value);
 		endforeach;
 		return $sanitizedValues;
 	}
@@ -163,7 +160,7 @@ class Database
 	*/
 	final public static function lastQuery () : string
 	{
-		return static::$lastQuery;
+		return static::$lastQuery ?: "";
 	}
 
 	/**
@@ -180,7 +177,7 @@ class Database
 	    else:
 		    $outputMessage = "A DATABASE ERROR OCCURRED TRY AGAIN LATER OR CONTACT ADMINISTRATOR<br /><br />";
 		    $log = "Database query failed: ".mysqli_error($this->connection)."\nLast SQL query: ".static::lastQuery();
-		    (new FileLog($log, "ERROR"))->setLogFile("DBLog.txt")->logMessage();
+		    (new Log($log, "ERROR"))->setLogFile("DBLog.txt")->logMessage();
 	    endif;
 	    die($outputMessage);
 	}	

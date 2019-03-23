@@ -161,7 +161,7 @@ class Database
 	*/
 	final public static function lastQuery () : string
 	{
-		return static::$lastQuery;
+		return static::$lastQuery ?: "";
 	}
 
 	/**

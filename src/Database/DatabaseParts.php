@@ -2,9 +2,6 @@
 
 namespace Blaze\Database;
 
-use Blaze\Database\Database;
-use Blaze\Validation\FormValidator as FV;
-use Blaze\Validation\Validator as Validate;
 
 /**
 * whiteGold - mini PHP Framework
@@ -103,6 +100,20 @@ class DatabaseParts
 	}
 
 	/**
+	* Generating sql query for update
+	* @param array
+	* @return string
+	*/
+	final public function generateQueryForUPdate () : string
+	{
+		$generatedArray = [];
+		foreach ($this->sanitizedAttributes() as $key => $value):
+			$generatedArray[] = "{$key} = '{$value}'";
+		endforeach;
+		return joinArray($generatedArray, ", ");
+	}
+
+	/**
 	* Checks if an object has given attribute.
 	* @param string $attribute
 	* @return bool
@@ -127,18 +138,16 @@ class DatabaseParts
 	/**
 	* Generates keys and thier values for sqlQuery
 	* @param array $associativeArray
-	* @param string $operator
+	* @param string $expressionOperator
 	* @return array
 	*/
-	final protected static function generateKeyValue (array $associativeArray, string $operator="=") : array
+	final protected static function generateKeyValue (array $associativeArray, string $expressionOperator="AND") : array
 	{
 		$generatedArray = [];
         $dbObject 		= Database::getInstance();
-		foreach ($associativeArray as $column => $value):
+		foreach ($associativeArray as $column => $operatorValues):
 	        $column = $dbObject->escapeValue($column);
-	    	if (isset($value)):
-				$generatedArray[] = "{$column} ".static::generateValue($column, $value, $operator);
-			endif;
+			$generatedArray[] = "{$column} ".static::generateValue($column, $operatorValues, $expressionOperator);
 		endforeach;
 		return $generatedArray;
 	}
@@ -146,23 +155,26 @@ class DatabaseParts
 	/**
 	* Generate values for sqlQuery based on the operator
 	* @param string $column
-	* @param mixed $value
-	* @param string $operator
+	* @param array $operatorValues
+	* @param string $expressionOperator
 	* @return string
 	*/
-	final protected static function generateValue (string $column, $value, string $operator) : string
+	final protected static function generateValue (string $column, array $operatorValues, string $expressionOperator="AND") : string
 	{
-        $dbObject 	= Database::getInstance();
-        $column 	= $dbObject->escapeValue($column);
-		if (is_array($value)):
-	        $values = $dbObject->escapeValues($value);
+        $dbObject 			= Database::getInstance();
+        $column 			= $dbObject->escapeValue($column);
+		$operator 			= static::validateOperator(array_shift($operatorValues));
+        $values 			= $dbObject->escapeValues($operatorValues);
+		$expressionOperator = static::validateOperator($expressionOperator, "AND");
+		$expression 		= "";
+		if (count($values) > 1):
 			switch ($operator)
 			{
 				case 'BETWEEN':
-					$value = joinArray($values, "' AND '", "{$operator} '", "'");
+					$expression = joinArray($values, "' AND '", "{$operator} '", "'");
 					break;
 				case 'IN':
-					$value = joinArray($values, "', '", "{$operator} ('", "')");
+					$expression = joinArray($values, "', '", "{$operator} ('", "')");
 					break;
 				case '=':
 				case '<':
@@ -171,13 +183,35 @@ class DatabaseParts
 				case '>=':
 				case '<>':
 				default:
-					$value = joinArray($values, "' OR {$column} {$operator} '", "{$operator} '", "'");
+					$expression = joinArray($values, "' {$expressionOperator} {$column} {$operator} '", "{$operator} '", "'");
 					break;
 			}
 		else:
-	        $value = "{$operator} '".$dbObject->escapeValue($value)."'";
+	        $expression = "{$operator} '".$dbObject->escapeValue($values[0])."'";
 		endif;
-		return $value;
+		return $expression;
+	}
+
+	/**
+	* Checks if expression is valid.
+	* @param string $expression
+	* @param string $defaultExpression
+	* @return bool
+	*/
+	final protected static function isExpressionValid (string $expression, string $defaultExpression="=") : bool
+	{
+		return static::validateOperator($expression, $defaultExpression);
+	}
+
+	/**
+	* Validates operator.
+	* @param string $operator
+	* @param string $defaultOperator
+	* @return string
+	*/
+	final protected static function validateOperator (string $operator, string $defaultOperator="=") : string
+	{
+		return static::isOperatorValid($operator) ? $operator : ($defaultOperator ?: '=');
 	}
 
 	/**
@@ -199,26 +233,5 @@ class DatabaseParts
 		$operators5 = ['ALL', 'AND', 'ANY', 'BETWEEN', 'EXISTS', 'IN', 'LIKE', 'NOT', 'OR', 'SOME'];
 		$operators 	= array_merge($operators1, $operators2, $operators3, $operators4, $operators5);
 		return in_array(strtoupper($operator), $operators);
-	}
-
-	/**
-	* Validates operator.
-	* @param string $operator
-	* @param string $defaultOperator
-	* @return string
-	*/
-	final protected static function validateOperator (string $operator, string $defaultOperator="=") : string
-	{
-		return static::isOperatorValid($operator) ? $operator : $defaultOperator;
-	}
-
-	/**
-	* Checks if expression is valid.
-	* @param string $expression
-	* @return bool
-	*/
-	final protected static function isExpressionValid (string $expression) : bool
-	{
-		return static::isOperatorValid($expression);
 	}
 }

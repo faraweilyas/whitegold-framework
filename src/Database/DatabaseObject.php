@@ -2,7 +2,6 @@
 
 namespace Blaze\Database;
 
-use Blaze\Database\Database;
 use Blaze\Validation\Validator as Validate;
 
 /**
@@ -21,11 +20,19 @@ class DatabaseObject extends DatabaseParts
 	* @var string
 	*/
 	protected static $tableName 		= "";
+
 	/** 
 	* Stores the database columns
 	* @var array
 	*/
 	protected static $databaseFields 	= [];
+
+	/** 
+	* Stores the affected rows
+	* @var int
+	*/
+	protected static $affectedRows 		= 0;
+
 	/** 
 	* Stores the found database rows as an object.
 	* @var mixed
@@ -93,15 +100,22 @@ class DatabaseObject extends DatabaseParts
 	*/
 	public function update () : bool
 	{
-        $dbObject 			= Database::getInstance();
-		$attributes 		= $this->sanitizedAttributes();
-		$attributePairs 	= static::generateKeyValue($attributes);
-
-		$sqlQuery 			= "UPDATE ".static::$tableName." SET ";
-		$sqlQuery 		   .= join(", ", $attributePairs);
-		$sqlQuery 		   .= " WHERE id=". $dbObject->escapeValue($this->id);
-		$result 			= $dbObject->query($sqlQuery);
+        $dbObject 	= Database::getInstance();
+		$sqlQuery 	= "UPDATE ".static::$tableName." SET ".$this->generateQueryForUPdate();
+		$sqlQuery  .= " WHERE id = ". $dbObject->escapeValue($this->id);
+		$result 	= $dbObject->query($sqlQuery);
     	return ($result) ? TRUE : FALSE;
+	}
+
+	/**
+	* Deletes a row from the database.
+	* @param int $id
+	* @return bool
+	*/
+	public function deleteRow (int $id) : bool
+	{
+		$this->id = $id;
+		return $this->delete() ? TRUE : FALSE;
 	}
 
 	/**
@@ -114,23 +128,44 @@ class DatabaseObject extends DatabaseParts
 		$sqlQuery  = "DELETE FROM ".static::$tableName." WHERE id=";
 		$sqlQuery .= $dbObject->escapeValue($this->id)." LIMIT 1";
 		$dbObject->query($sqlQuery);
+		static::$affectedRows = $dbObject->affectedRows();
 		return ($dbObject->affectedRows() == 1) ? TRUE : FALSE;
 	}
 
 	/**
 	* Delete a record from the database where a given column is equal to the given value 
 	* @param string $column
-	* @param string $value
+	* @param array $operatorValue
+	* @param string $joinOperator
 	* @return bool
 	*/
-	public static function deleteWhere (string $column, string $value) : bool
+	public static function deleteWhere (string $column, array $operatorValue, string $joinOperator="AND") : bool
 	{
-        $dbObject  = Database::getInstance();
-		$sqlQuery  = "DELETE FROM ".static::$tableName." WHERE ";
-		$sqlQuery .= $dbObject->escapeValue($column)."=";
-		$sqlQuery .= $dbObject->escapeValue($value)." LIMIT 1";
+		$joinOperator 	= static::validateOperator($joinOperator, "AND");
+		$expression 	= static::generateValue($column, $operatorValue, $joinOperator);
+		$sqlQuery  		= "DELETE FROM ".static::$tableName." WHERE {$column} {$expression}";
+        $dbObject  		= Database::getInstance();
 		$dbObject->query($sqlQuery);
-		return ($dbObject->affectedRows() == 1) ? TRUE : FALSE;
+		static::$affectedRows = $dbObject->affectedRows();
+		return ($dbObject->affectedRows() > 0) ? TRUE : FALSE;
+	}
+
+	/**
+	* Delete where a given column or more is equal to a given value (Multiple Columns).
+	* @param array $columnsOperatorsValues takes an assoc array and first value should be the expression
+	* @param string $joinOperator
+	* @param string $expressionOperator
+	* @return bool
+	*/
+	public static function deleteMultipleWhere (array $columnsOperatorsValues, string $joinOperator="AND", string $expressionOperator="AND") : bool
+	{
+		$joinOperator 	= static::validateOperator($joinOperator, "AND");
+		$expressions 	= static::generateKeyValue($columnsOperatorsValues, $expressionOperator);
+		$sqlQuery  		= "DELETE FROM ".static::$tableName." WHERE ".join(" $joinOperator ", $expressions);
+        $dbObject  		= Database::getInstance();
+		$dbObject->query($sqlQuery);
+		static::$affectedRows = $dbObject->affectedRows();
+		return ($dbObject->affectedRows() > 0) ? TRUE : FALSE;
 	}
 
 	/**
@@ -142,6 +177,130 @@ class DatabaseObject extends DatabaseParts
 	{
 		$order = static::validateOrder($order);
 		return static::findBySql("SELECT * FROM ".static::$tableName." ORDER BY id {$order}");
+	}
+
+	/**
+	* Finds a row or more rows by the id column and returns found row as an object otherwise FALSE
+	* @param int $id
+	* @param string $operator
+	* @param int $limit
+	* @return mixed
+	*/
+	public static function findById (int $id, string $operator="=", int $limit=1)
+	{
+        $id 		= Database::getInstance()->escapeValue($id);
+		$operator 	= static::validateOperator($operator, '=');
+		return static::limitFindBySql("SELECT * FROM ".static::$tableName." WHERE id {$operator} {$id}", $limit);
+	}
+
+	/**
+	* Find some of the database rows by limiting it.
+	* @param int $limit
+	* @param string $order
+	* @return mixed
+	*/
+	public static function findSome (int $limit=0, string $order="DESC")
+	{
+		$order = static::validateOrder($order);
+		return static::limitFindBySql("SELECT * FROM ".static::$tableName." ORDER BY id {$order}", $limit);
+	}
+
+	/**
+	* Find by column from the database
+	* @param string $column
+	* @param int $limit
+	* @param string $order
+	* @return mixed
+	*/
+	public static function findColumn (string $column, int $limit=0, string $order="DESC")
+	{
+		$order 		= static::validateOrder($order);
+        $dbObject 	= Database::getInstance();
+        $column 	= $dbObject->escapeValue($column);
+		return static::limitFindBySql("SELECT {$column} FROM ".static::$tableName." ORDER BY id {$order}", $limit);
+	}
+
+	/**
+	* Find by columns from the database
+	* @param string $columns
+	* @param int $limit
+	* @param string $order
+	* @return mixed
+	*/
+	public static function findColumns (array $columns, int $limit=0, string $order="DESC")
+	{
+		$order 	   	= static::validateOrder($order);
+        $dbObject  	= Database::getInstance();
+		$columns 	= joinArray($dbObject->escapeValues($columns), ', ');
+		return static::limitFindBySql("SELECT {$columns} FROM ".static::$tableName." ORDER BY id {$order}", $limit);
+	}
+
+	/**
+	* Find where a given column is equal to a given value and return the first occurence as the first element in the array.
+	* @param string $column
+	* @param array $operatorValue
+	* @param string $joinOperator
+	* @param int $limit
+	* @return mixed
+	*/
+	public static function findByColumn (string $column, array $operatorValue, string $joinOperator="AND", int $limit=1)
+	{
+		$joinOperator 	= static::validateOperator($joinOperator, "AND");
+		$expression 	= static::generateValue($column, $operatorValue, $joinOperator);
+		$sqlQuery  		= "SELECT * FROM ".static::$tableName." WHERE {$column} {$expression}";
+		return static::limitFindBySql($sqlQuery, $limit);
+	}
+
+	/**
+	* Find where a given column is equal to a given value and return the first occurence as the first element in the array (Multiple Columns).
+	* @param array $columnsOperatorsValues takes an assoc array and first value should be the expression
+	* @param string $joinOperator
+	* @param string $expressionOperator
+	* @param int $limit
+	* @return mixed
+	*/
+	public static function findMultipleColumn (array $columnsOperatorsValues, string $joinOperator="AND", string $expressionOperator="AND", int $limit=1)
+	{
+		$joinOperator 	= static::validateOperator($joinOperator, 'AND');
+		$expressions 	= static::generateKeyValue($columnsOperatorsValues, $expressionOperator);
+		$sqlQuery  		= "SELECT * FROM ".static::$tableName." WHERE ";
+		$sqlQuery 	   .= join(" $joinOperator ", $expressions);
+		return static::limitFindBySql($sqlQuery, $limit);
+	}
+
+	/**
+	* Find where a given column is equal to a given value.
+	* @param string $column
+	* @param array $operatorValue
+	* @param string $order
+	* @param string $joinOperator
+	* @param int $limit
+	* @return mixed
+	*/
+	public static function findWhere (string $column, array $operatorValue, string $order="DESC", string $joinOperator="AND", int $limit=0)
+	{
+		$joinOperator 	= static::validateOperator($joinOperator, "AND");
+		$expression 	= static::generateValue($column, $operatorValue, $joinOperator);
+		$sqlQuery  		= "SELECT * FROM ".static::$tableName." WHERE {$column} {$expression} ORDER BY id {$order}";
+		return static::limitFindBySql($sqlQuery, $limit);
+	}
+
+	/**
+	* Find where a given column or more is equal to a given value (Multiple Columns).
+	* @param array $columnsOperatorsValues takes an assoc array and first value should be the expression
+	* @param string $joinOperator
+	* @param string $order
+	* @param string $expressionOperator
+	* @param int $limit
+	* @return mixed
+	*/
+	public static function findMultipleWhere (array $columnsOperatorsValues, string $joinOperator="AND", string $order="DESC", string $expressionOperator="AND", int $limit=0)
+	{
+		$joinOperator 	= static::validateOperator($joinOperator, 'AND');
+		$expressions 	= static::generateKeyValue($columnsOperatorsValues, $expressionOperator);
+		$sqlQuery  		= "SELECT * FROM ".static::$tableName." WHERE ";
+		$sqlQuery 	   .= join(" $joinOperator ", $expressions)." ORDER BY id {$order}";
+		return static::limitFindBySql($sqlQuery, $limit);
 	}
 
 	/**
@@ -157,175 +316,17 @@ class DatabaseObject extends DatabaseParts
 	}
 
 	/**
-	* Find Columns from the database
-	* @param string $column
-	* @param string $order
-	* @return array
-	*/
-	public static function findColumn (string $column, string $order="DESC") : array
-	{
-		$order 		= static::validateOrder($order);
-        $dbObject 	= Database::getInstance();
-        $column 	= $dbObject->escapeValue($column);
-		return static::findBySql("SELECT {$column} FROM ".static::$tableName." ORDER BY id {$order}");
-	}
-
-	/**
-	* Find Columns from the database
-	* working on it
-	* @param string $column
-	* @param string $order
-	* @return array
-	*/
-	public static function findColumns (string $column, string $order="DESC") : array
-	{
-        $dbObject  		= Database::getInstance();
-		$order 	   		= static::validateOrder($order);
-        $columnsValues 	= $dbObject->escapeValues($columnsValues);
-		$attributePairs = static::generateKeyValue($columnsValues);
-
-		$sqlQuery  		= "SELECT * FROM ".static::$tableName." WHERE ";
-		$sqlQuery 	   .= join(" AND ", $attributePairs);
-		$sqlQuery      .= " ORDER BY id {$order}";
-		return static::findBySql($sqlQuery);
-		
-		$order 		= static::validateOrder($order);
-        $dbObject 	= Database::getInstance();
-        $column 	= $dbObject->escapeValue($column);
-		return static::findBySql("SELECT {$column} FROM ".static::$tableName." ORDER BY id {$order}");
-	}
-
-	/**
 	* Search the database
-	* @param string $searchQ
 	* @param string $column
-	* @param string $order
-	* @return array
-	*/
-	public static function search (string $searchQ, string $column, string $order="DESC") : array
-	{
-		$order 		= static::validateOrder($order);
-		$sqlQuery 	= "SELECT * FROM ".static::$tableName." WHERE {$column} LIKE '%$searchQ%' ORDER BY id {$order}";
-		return static::findBySql($sqlQuery);
-	}
-
-	/**
-	* Find some of the database rows by limiting it.
+	* @param string $searchQ
 	* @param int $limit
 	* @param string $order
-	* @return array
+	* @return mixed
 	*/
-	public static function findSome (int $limit=5, string $order="DESC") : array
+	public static function search (string $column, string $searchQ, int $limit=0, string $order="DESC")
 	{
 		$order = static::validateOrder($order);
-		return static::findBySql("SELECT * FROM ".static::$tableName." ORDER BY id {$order} LIMIT {$limit}");
-	}
-
-	/**
-	* Returns found column as an object otherwise FALSE
-	* @param int $id
-	* @return mixed
-	*/
-	public static function findById (int $id)
-	{
-        $dbObject  		= Database::getInstance();
-		$sqlQuery  		= "SELECT * FROM ".static::$tableName." WHERE id=".$dbObject->escapeValue($id)." LIMIT 1";
-		$resultArray 	= static::findBySql($sqlQuery);
-		return !empty($resultArray) ? array_shift($resultArray) : FALSE;
-	}
-
-	/**
-	* Find where a given column is equal to a given value and return the first element in the array.
-	* @param string $column
-	* @param string $value
-	* @return mixed
-	*/
-	public static function findByColumn (string $column, string $value)
-	{
-        $dbObject  		= Database::getInstance();
-		$sqlQuery  		= "SELECT * FROM ".static::$tableName." WHERE ";
-		$sqlQuery 	   .= $dbObject->escapeValue($column)." = '";
-		$sqlQuery 	   .= $dbObject->escapeValue($value)."' LIMIT 1";
-		$resultArray 	= static::findBySql($sqlQuery);
-		return !empty($resultArray) ? array_shift($resultArray) : FALSE;
-	}
-
-	/**
-	* Find where a given column is equal to a given value (Multiple Columns).
-	* $columnsValues takes an assoc array.
-	* @param array $columnsValues
-	* @param string $expression
-	* @return mixed
-	*/
-	public static function findMultipleColumn (array $columnsValues, string $expression="AND")
-	{
-        $dbObject  		= Database::getInstance();
-        $columnsValues 	= $dbObject->escapeValues($columnsValues);
-		$attributePairs = static::generateKeyValue($columnsValues);
-		if (!static::isExpressionValid($expression)) $expression = "AND";
-		$sqlQuery  		= "SELECT * FROM ".static::$tableName." WHERE ";
-		$sqlQuery 	   .= join(" $expression ", $attributePairs)." LIMIT 1";
-		$resultArray 	= static::findBySql($sqlQuery);
-		return !empty($resultArray) ? array_shift($resultArray) : FALSE;
-	}
-
-	/**
-	* Find where a given column is equal to a given value.
-	* @param string $column
-	* @param string $value
-	* @param string $order
-	* @return array
-	*/
-	public static function findWhere (string $column, string $value, string $order="DESC") : array
-	{
-        $dbObject  = Database::getInstance();
-		$order 	   = static::validateOrder($order);
-		$sqlQuery  = "SELECT * FROM ".static::$tableName." WHERE ";
-		$sqlQuery .= $dbObject->escapeValue($column)." = '";
-		$sqlQuery .= $dbObject->escapeValue($value)."' ORDER BY id {$order}";
-		return static::findBySql($sqlQuery);
-	}
-
-	/**
-	* Find where a given column is equal to a given value (Multiple Columns).
-	* $columnsValues takes an assoc array.
-	* @param array $columnsValues
-	* @param string $expression
-	* @param string $order
-	* @return array
-	*/
-	public static function findMultipleWhere (array $columnsValues, string $expression="AND", string $order="DESC") : array
-	{
-        $dbObject  		= Database::getInstance();
-		$order 	   		= static::validateOrder($order);
-        $columnsValues 	= $dbObject->escapeValues($columnsValues);
-		$attributePairs = static::generateKeyValue($columnsValues);
-		if (!static::isExpressionValid($expression)) $expression = "AND";
-		$sqlQuery  		= "SELECT * FROM ".static::$tableName." WHERE ";
-		$sqlQuery 	   .= join(" $expression ", $attributePairs);
-		$sqlQuery      .= " ORDER BY id {$order}";
-		return static::findBySql($sqlQuery);
-	}
-    
-    /**
-	* Find where a given column is equal to a given value (Multiple Columns).
-	* $columnsValues takes an assoc array.
-	* @param array $columnsValues
-	* @param string $expression
-	* @param string $order
-	* @return array
-	*/
-	public static function findMultipleWhereBetween (array $columnsValues, string $expression="AND", string $order="DESC") : array
-	{
-        $dbObject  		= Database::getInstance();
-		$order 	   		= static::validateOrder($order);
-        $columnsValues 	= $dbObject->escapeValues($columnsValues);
-		$attributePairs = static::generateKeyValue($columnsValues); 
-		if (!static::isExpressionValid($expression)) $expression = "AND";
-		$sqlQuery  		= "SELECT * FROM ".static::$tableName." WHERE ";
-		$sqlQuery 	   .= join(" $expression ", $attributePairs);
-		$sqlQuery      .= " ORDER BY id {$order}";
-		return static::findBySql($sqlQuery);
+		return static::limitFindBySql("SELECT * FROM ".static::$tableName." WHERE {$column} LIKE '%$searchQ%' ORDER BY id {$order}", $limit);
 	}
 
 	/**
@@ -344,49 +345,35 @@ class DatabaseObject extends DatabaseParts
 	/**
 	* Count where a given column is equal to a given value
 	* @param string $column
-	* @param string $value
-	* @param string $expression
+	* @param array $operatorValue
+	* @param string $joinOperator
 	* @return int
 	*/
-	public static function countWhere (string $column, string $value, string $expression="=") : int
+	public static function countWhere (string $column, array $operatorValue, string $joinOperator="AND") : int
 	{
-        $dbObject  	= Database::getInstance();
-		$sqlQuery 	= "SELECT COUNT(*) as count FROM ".static::$tableName." WHERE ";
-		$sqlQuery  .= $dbObject->escapeValue($column)." $expression '";
-		$sqlQuery  .= $dbObject->escapeValue($value)."'";
-		$resultSet 	= $dbObject->query($sqlQuery);
-		$row 		= Database::fetchAssoc($resultSet);
+		$joinOperator 	= static::validateOperator($joinOperator, "AND");
+		$expression 	= static::generateValue($column, $operatorValue, $joinOperator);
+		$sqlQuery  		= "SELECT COUNT(*) as count FROM ".static::$tableName." WHERE {$column} {$expression}";
+		$resultSet 		= Database::getInstance()->query($sqlQuery);
+		$row 			= Database::fetchAssoc($resultSet);
 		return (int) array_shift($row);
 	}
 
 	/**
 	* Count where a given column is equal to a given value (Multiple Columns).
-	* $columnsValues takes an assoc array.
-	* @param array $columnsValues
-	* @param string $expression
+	* @param array $columnsOperatorsValues takes an assoc array and first value should be the expression
+	* @param string $joinOperator
+	* @param string $expressionOperator
 	* @return int
 	*/
-	public static function countMultipleWhere (array $columnsValues, string $expression="AND") : int
+	public static function countMultipleWhere (array $columnsOperatorsValues, string $joinOperator="AND", string $expressionOperator="AND") : int
 	{
-        $dbObject  			= Database::getInstance();
-        $columnsValues 		= $dbObject->escapeValues($columnsValues);
-		$attributePairs 	= static::generateKeyValue($columnsValues);
-		$sqlQuery 			= "SELECT COUNT(*) as count FROM ".static::$tableName." WHERE ";
-		$sqlQuery 	   		.= join(" $expression ", $attributePairs);
-		$resultSet 			= $dbObject->query($sqlQuery);
-		$row 				= Database::fetchAssoc($resultSet);
+		$joinOperator 	= static::validateOperator($joinOperator, 'AND');
+		$expressions 	= static::generateKeyValue($columnsOperatorsValues, $expressionOperator);
+		$sqlQuery  		= "SELECT COUNT(*) as count FROM ".static::$tableName." WHERE ".join(" $joinOperator ", $expressions);
+		$resultSet 		= Database::getInstance()->query($sqlQuery);
+		$row 			= Database::fetchAssoc($resultSet);
 		return (int) array_shift($row);
-	}
-
-	/**
-	* Deletes a row from the database.
-	* @param int $id
-	* @return bool
-	*/
-	public function deleteRow (int $id) : bool
-	{
-		$this->id = $id;
-		return $this->delete() ? TRUE : FALSE;
 	}
 
 	/**

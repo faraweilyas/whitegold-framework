@@ -642,6 +642,9 @@ if (!function_exists('datetimeToText')):
 			case 'fulldate':
 				$dateFormat = "%d %B, %Y at %I:%M %p";
 				break;
+			case 'fulldates':
+				$dateFormat = "%B %d, %Y at %I:%M %p";
+				break;
 			case 'date':
 				$dateFormat = "%m/%d/%Y";
 				break;

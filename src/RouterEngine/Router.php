@@ -45,9 +45,20 @@ class Router extends RouterParts
 	*/
 	final public static function getRequestedRoute () : string
 	{
-		return (php_sapi_name() === 'cli-server')
-				? urldecode(parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH))
-				: "/".($_GET['url'] ?? "");
+		$requestedRoute = '';
+		switch (php_sapi_name())
+		{
+			case 'cli-server':
+				$requestedRoute = urldecode(parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH));
+				break;
+			case 'cli':
+				$requestedRoute = $_SERVER['argv'][1] ?? "/";
+				break;
+			default:
+				$requestedRoute = "/".($_GET['url'] ?? "");
+				break;
+		}
+		return $requestedRoute;
 	}
 
 	/**

@@ -100,7 +100,7 @@ class Secure extends SessionHelper
 	*/
 	private function requestType (string $requestType) : bool
 	{
-		return $_SERVER['REQUEST_METHOD'] === strtoupper($requestType);
+		return ($_SERVER['REQUEST_METHOD'] ?? '') === strtoupper($requestType);
 	}
 
 	/**

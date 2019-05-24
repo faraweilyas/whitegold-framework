@@ -22,8 +22,11 @@ if (!function_exists('redirectTo')):
 	*/
 	function redirectTo (string $location=NULL) 
 	{
-		$location = Route::redirectRoute($location);
-		if ($location != NULL):
+		if (!empty($location)):
+			$scheme = parse_url($location)['scheme'] ?? '';
+			if (empty($scheme) || !in_array($scheme, ['https', 'http'])):
+				$location = Route::redirectRoute($location);
+			endif;
 			header("Location: {$location}");
 			exit;
 		endif;
@@ -246,7 +249,7 @@ if (!function_exists('getFiles')):
 	}
 endif;
 
-if (!function_exists('renameFileExtention')):
+if (!function_exists('renameFilesExtention')):
 	/**
 	* Rename files in a dir based on extension specified
 	* @param string $dir

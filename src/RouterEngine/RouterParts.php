@@ -51,8 +51,14 @@ abstract class RouterParts implements RouterDaemonInterface
 	* Regex pattern for route.
 	* @var string
 	*/
-	protected static $_pattern 			= "";	
-	
+	protected static $_pattern 			= "";
+
+	/**
+	* Absolute route.
+	* @var bool
+	*/
+	public static $absoluteRoute 		= FALSE;
+
 	/**
 	* Checks if requested route matches any of the registered routes {Match Algorithm}.
 	* @return bool
@@ -373,9 +379,11 @@ abstract class RouterParts implements RouterDaemonInterface
 	{
 		static::$route 	= empty(static::$route) ? static::getRequestedRoute() : static::$route;
 		$occurences 	= substr_count(static::$route, "/");
+		$route 			= "./".ltrim($route, "./");
+		if (static::$absoluteRoute) return getHost()."/".ltrim($route, "./");
 		if ($occurences > 1 AND Validate::hasValue($route)):
-			$route = substr($route, strlen(getConstant("ROOT", TRUE)));
-			for ($i = 1; $i <= ($occurences - 1); $i++) $route = "../".$route;
+			$route 		= ltrim($route, "./");
+			$route 		= str_repeat("../", ($occurences - 1)).$route;
 			return $route;
 		endif;
 		return $route;

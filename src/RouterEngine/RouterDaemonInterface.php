@@ -29,7 +29,7 @@ interface RouterDaemonInterface
 	static function searchUris (string $needle, array $haystack) : array;
 
 	/**
-	* Debugger that shows steps on how router works.
+	* Debugger that show steps on how router works.
 	*/
 	static function _DEBUG ();
 }

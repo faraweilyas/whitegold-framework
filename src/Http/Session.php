@@ -47,9 +47,13 @@ class Session extends SessionHelper
     /**
     * Configures and starts the session.
     */
-    public function __construct () 
+    public function __construct ($expire=NULL, $path=NULL, $domain=NULL, $secure=NULL, $httponly=NULL) 
     {
-        $this->cofigureSession("domain", getConstant("MASTER_DOMAIN", TRUE));
+        $this->cofigureSession("expire", 	$expire);
+        $this->cofigureSession("path", 		$path);
+        $this->cofigureSession("domain", 	$domain);
+        $this->cofigureSession("secure", 	$secure);
+        $this->cofigureSession("httponly", 	$httponly);
         $this->initialize();
         $this->checkLogin();
         $this->setMaxElapsed($this->getMaxElapsed());
@@ -61,7 +65,6 @@ class Session extends SessionHelper
     */
     public function getMaxElapsed () : string
     {
-        // if (!$this->isSessionValid()) Session::setSession("MAX_ELAPSED", NULL);
         if (Session::getSession("REMEMBER_ME") == 'yes'):
             // 1 week
             $maxElapsed = Session::getSession("MAX_ELAPSED") ?? (60 * 60 * 24 * 7);

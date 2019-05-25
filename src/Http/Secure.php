@@ -11,23 +11,18 @@ namespace Blaze\Http;
 *
 * Secure Class
 */
-class Secure extends SessionHelper
+class Secure
 {
-    /**
-    * Configures and starts the session.
-    */
-    public function __construct () 
-    {
-        $this->initialize();
-    }
-
 	/**
 	* Create csrf token in an html input tag.
+	* @param bool $return
+	* @return mixed
 	*/
-	public function csrfTokenTag ()
+	public function csrfTokenTag (bool $return=TRUE)
 	{
 		$token = $this->createCsrfToken();
-		print "<input type='hidden' name='csrfToken' value='$token' />".PHP_EOL;
+		$input = "<input type='hidden' name='csrfToken' value='{$token}' />".PHP_EOL;
+		return ($return) ? $input : print($input);
 	}
 
 	/**
@@ -52,7 +47,7 @@ class Secure extends SessionHelper
 	public function checkRequestType (string $requestType) : bool
 	{
 		if (!$this->requestType($requestType)) return FALSE;
-		if (php_sapi_name() !== 'cli-server'):
+		if (!in_array(php_sapi_name(), ['cli-server', 'cli'])):
 			if (!$this->requestIsSameDomain()) return FALSE;
 		endif;
 		return TRUE;

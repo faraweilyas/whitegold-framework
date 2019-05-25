@@ -965,3 +965,40 @@ if (!function_exists('joinArray')):
 		return trim($preText.join($join, $values).$postText);
 	}
 endif;
+
+if (!function_exists('array_mpop')):
+	/**
+	* Pop the element off the end of array multiple times
+	* @param array $array
+	* @param int $iterate
+	* @return array
+	*/
+	function array_mpop (array $array, int $iterate=1) : array
+	{
+		$arrayLength = count($array);
+	    if ($arrayLength < 1 || $arrayLength < $iterate || $iterate < 1)
+	        return $array;
+
+	    while (($iterate--) != FALSE)
+	        array_pop($array);
+
+	    return $array;
+	}
+endif;
+
+if (!function_exists('getSubDomain')):
+	/**
+	* Gets subdomain from url and returns string or array
+	* @param string $url
+	* @param int $tldLevel
+	* @param bool $returnString
+	* @return mixed
+	*/
+	function getSubDomain (string $url, int $tldLevel=1, bool $returnString=TRUE)
+	{
+		$parsedUrl 	= parse_url($url);
+		$host 		= explode('.', $parsedUrl['host']);
+		$subdomains = array_mpop($host, $tldLevel + 1);
+		return ($returnString) ? joinArray($subdomains, '.') : $subdomains;
+	}
+endif;

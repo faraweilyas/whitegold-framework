@@ -62,6 +62,7 @@ abstract class SessionHelper
         $this->secure   = $this->secure     ?? NULL;
         // JavaScript can't access cookie
         $this->httponly = $this->httponly   ?? TRUE;
+        $sessionName 	= session_name("domain");
         session_set_cookie_params($this->expire, $this->path, $this->domain, $this->secure, $this->httponly);
     }
 

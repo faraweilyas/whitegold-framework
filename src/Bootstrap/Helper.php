@@ -1002,3 +1002,32 @@ if (!function_exists('getSubDomain')):
 		return ($returnString) ? joinArray($subdomains, '.') : $subdomains;
 	}
 endif;
+
+if (!function_exists('getRunTime')):
+	/**
+	* Gets process runtime
+	* @param bool $round
+	* @param int $decimals
+	* @return int | float
+	*/
+	function getRunTime (bool $round=FALSE, int $decimals=0)
+	{
+		$runTime = microtime(true) - $_SERVER["REQUEST_TIME_FLOAT"];
+		return ($round) ? round($runTime, $decimals) : $runTime;
+	}
+endif;
+
+if (!function_exists('getResourceUsage')):
+	/**
+	* Gets the current resource usage by script
+	* @param array $resourceUsageStart
+	* @param string $index
+	* @return int $seconds
+	*/
+	function getResourceUsage (array $resourceUsageStart, string $index="utime")
+	{
+		$resourceUsageEnd = getrusage();
+	    return ($resourceUsageEnd["ru_$index.tv_sec"] * 1000 + intval($resourceUsageEnd["ru_$index.tv_usec"] / 1000))
+	     - ($resourceUsageStart["ru_$index.tv_sec"] * 1000 + intval($resourceUsageStart["ru_$index.tv_usec"] / 1000));
+	}
+endif;

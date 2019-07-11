@@ -371,6 +371,26 @@ abstract class RouterParts implements RouterDaemonInterface
 	}
 	
 	/**
+	* Activate absolute route.
+	* @return bool
+	*/
+	final public static function activateAbsoluteRoute() : bool
+	{
+		static::$absoluteRoute = TRUE;
+		return static::$absoluteRoute;
+	}
+	
+	/**
+	* Activate relative route.
+	* @return bool
+	*/
+	final public static function activateRelativeRoute() : bool
+	{
+		static::$absoluteRoute = FALSE;
+		return static::$absoluteRoute;
+	}
+	
+	/**
 	* It gets the raw GET url parameter for proper evaluation against route.
 	* @param string $route
 	* @return string
@@ -380,7 +400,9 @@ abstract class RouterParts implements RouterDaemonInterface
 		static::$route 	= empty(static::$route) ? static::getRequestedRoute() : static::$route;
 		$occurences 	= substr_count(static::$route, "/");
 		$route 			= "./".ltrim($route, "./");
-		if (static::$absoluteRoute) return getHost()."/".ltrim($route, "./");
+		if (static::$absoluteRoute AND php_sapi_name() != "cli"):
+			return getHost()."/".ltrim($route, "./");
+		endif;
 		if ($occurences > 1 AND Validate::hasValue($route)):
 			$route 		= ltrim($route, "./");
 			$route 		= str_repeat("../", ($occurences - 1)).$route;

@@ -848,13 +848,13 @@ if (!function_exists('timeAgo')):
 		$diff->w    = floor($diff->d / 7);
 		$diff->d    -= $diff->w * 7;
 
-		$fullString     = ['y' => 'Year', 'm' => 'Month', 'w' => 'Week', 'd' => 'Day', 'h' => 'Hour', 'i' => 'Minute', 's' => 'Second'];
+		$fullString     = ['y' => 'year', 'm' => 'month', 'w' => 'week', 'd' => 'day', 'h' => 'hour', 'i' => 'minute', 's' => 'second'];
 		$shortString    = ['y' => 'y', 'm' => 'm', 'w' => 'w', 'd' => 'd', 'h' => 'h', 'i' => 'm', 's' => 's'];
 		$string         = ($full) ? $fullString : $shortString;
 
 		foreach ($string as $k => &$v):
 			if ($diff->$k)
-				$v = $diff->$k.''.$v.($diff->$k > 1 ? 's' : '');
+				$v = $diff->$k.' '.$v.($diff->$k > 1 ? 's' : '');
 			else
 				unset($string[$k]);
 		endforeach;
@@ -1029,5 +1029,22 @@ if (!function_exists('getResourceUsage')):
 		$resourceUsageEnd = getrusage();
 	    return ($resourceUsageEnd["ru_$index.tv_sec"] * 1000 + intval($resourceUsageEnd["ru_$index.tv_usec"] / 1000))
 	     - ($resourceUsageStart["ru_$index.tv_sec"] * 1000 + intval($resourceUsageStart["ru_$index.tv_usec"] / 1000));
+	}
+endif;
+
+if (!function_exists('generateRandomToken')):
+	/**
+	* Generates a secure random string with specified length
+	* @param int $length
+	* @return string
+	*/
+	function generateRandomToken (int $length=16) : string
+	{
+		if ($length <= 0) return "";
+		if (version_compare(PHP_VERSION, "7.0.0", "<")):
+			return bin2hex (openssl_random_pseudo_bytes($length));
+		else:
+			return bin2hex(random_bytes($length));
+		endif;
 	}
 endif;

@@ -160,18 +160,41 @@ if (!function_exists('requireFile')):
 	/**
 	* Require specified file.
 	* @param string $file
-	* @return bool
+	* @param string $defaultExtension
+	* @return array
 	*/
-	function requireFile (string $file) : bool
+	function requireFile(string $file, string $defaultExtension="php") : array
 	{
-		$pathParts  = pathinfo($file);
-		$file       = !isset($pathParts['extension']) ? $file.".php" : $file;
-		if (!file_exists($file)):
+		$extension  = pathinfo($file, PATHINFO_EXTENSION);
+		$file   	= empty($extension) ? "{$file}.{$defaultExtension}" : $file;
+		if (!file_exists($file) || !is_file($file)):
 			print $file.": File was not found!";
-			return FALSE;
+			return get_defined_vars();
 		endif;
 		require_once $file;
-		return TRUE;
+		return get_defined_vars();
+	}
+endif;
+
+if (!function_exists('requireMultipleFiles')):
+	/**
+	* Require multiple files.
+	* @param array $filePaths
+	* @param string $defaultExtension
+	* @return array
+	*/
+	function requireMultipleFiles(array $filePaths, string $defaultExtension="php") : array
+	{
+		foreach ($filePaths as $filePath):
+			$extension  = pathinfo($filePath, PATHINFO_EXTENSION);
+			$filePath   = empty($extension) ? "{$filePath}.{$defaultExtension}" : $filePath;
+			if (!file_exists($filePath) || !is_file($filePath)):
+				print "{$filePath}: File was not found!";
+				return get_defined_vars();
+			endif;
+			require_once $filePath;
+		endforeach;
+		return get_defined_vars();
 	}
 endif;
 

@@ -86,15 +86,36 @@ if (!function_exists('__intended')):
 	}
 endif;
 
+if (!function_exists('preventFileCaching')):
+	/**
+	* Prevents file caching for javascript or css files by adding last modified timestamp.
+	* @param string $file
+	* @return string
+	*/
+	function preventFileCaching(string $file='') : string
+	{
+		if (file_exists($file)):
+			$fileExtension = pathinfo($file, PATHINFO_EXTENSION);
+			if (in_array($fileExtension, ['css', 'js'])):
+				$lastTimeModified = filemtime($file);
+			    $file .= "?mod={$lastTimeModified}";
+			endif;
+		endif;
+		return $file;
+	}
+endif;
+
 if (!function_exists('__file')):
 	/**
 	* Alternative function for proper file inclusion for HTML.
 	* @param string $file
 	* @param bool $return
+	* @param string $callback
 	* @return mixed
 	*/
-	function __file ($file='', bool $return=TRUE)
+	function __file ($file='', bool $return=TRUE, string $callback="")
 	{
+		$file = (!empty($callback) AND function_exists($callback)) ? $callback($file) : $file;
 		return Route::_file($file, $return);
 	}
 endif;
@@ -423,7 +444,7 @@ if (!function_exists('getNavigator')):
 	*/
 	function getNavigator () : string
 	{
-		return $_SERVER['HTTP_USER_AGENT'];
+		return $_SERVER['HTTP_USER_AGENT'] ?? "";
 	}
 endif;
 

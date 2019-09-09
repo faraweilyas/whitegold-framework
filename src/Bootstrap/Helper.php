@@ -278,16 +278,19 @@ if (!function_exists('getFiles')):
 	/**
 	* Get files in specified directory
 	* @param string $dir
+	* @param bool $includePath
 	* @return array
 	*/
-	function getFiles (string $dir=NULL) : array
+	function getFiles (string $dir=NULL, bool $includePath=FALSE) : array
 	{
 		$dir 			= substr($dir, strlen($dir) - 1) == "/" ? $dir : $dir."/";
 		$dirContents 	= array_diff(dirScanner($dir), ['.', '..']);
 		$files 			= [];
 		foreach ($dirContents as $dirContent):
 			$file = $dir.$dirContent;
-			if (is_file($file) && file_exists($file)) $files[] = $dirContent;
+			if (is_file($file) && file_exists($file)):
+				$files[] = ($includePath) ? $file : $dirContent;
+			endif;
 		endforeach;
 		return $files;
 	}

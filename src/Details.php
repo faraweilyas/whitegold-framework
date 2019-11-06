@@ -3,79 +3,80 @@
 namespace Blaze;
 
 /**
-* whiteGold - mini PHP Framework
-*
-* @package whiteGold
-* @author Farawe iLyas <faraweilyas@gmail.com>
-* @link http://faraweilyas.me
-*
-* Details Class
-*/
+ * whiteGold - mini PHP Framework
+ *
+ * @package whiteGold
+ * @author Farawe iLyas <faraweilyas@gmail.com>
+ * @link http://faraweilyas.me
+ *
+ * Details class
+ */
 abstract class Details
 {
 	/**
-	* Page Title for HTML
-	* @var string
-	*/
-	protected static $title;
-	/**
-	* Page Description for HTML
-	* @var string
-	*/
-	protected static $description;
+	 * Page Title for HTML
+	 * @var string
+	 */
+	protected $title;
 
 	/**
-	* Constructor to set the Page Details.
+	 * Page Description for HTML
+	 * @var string
+	 */
+	protected $description;
+
+	/**
+	 * Constructor to set the page details.
+	 * @param string $title
+	 * @param string $description
+	 */
+	public function __construct(string $title=NULL, string $description=NULL)
+	{
+		$this->setPageDetails($title, $description);
+	}
+
+	/**
+	 * Set the page details.
+	 * @param string $title
+	 * @param string $description
+	 */
+	protected function setPageDetails (string $title=NULL, string $description=NULL)
+	{
+		$this->title          = $title;
+		$this->description    = $description;
+	}
+
+	/**
+	* Set the title.
 	* @param string $title
-	* @param string $description
 	*/
-	public function __construct (string $title=NULL, string $description=NULL)
+	public function setTitle (string $title=NULL)
 	{
-		static::setPageDetails($title, $description);
+		$this->title = $title;
 	}
 
 	/**
-	* Sets the Page Details.
-	* @param string $title
-	* @param string $description
-	*/
-	protected static function setPageDetails (string $title=NULL, string $description=NULL)
+	 * Set the description.
+	 * @param string $description
+	 */
+	public function setDescription(string $description=NULL)
 	{
-		self::$title          = $title;
-		self::$description    = $description;
+		$this->description = $description;
 	}
 
 	/**
-	* Set the Page Title.
-	* @param string $title
-	*/
-	public static function setTitle (string $title=NULL)
+	 * Gets the title.
+	 */
+	public function title() : string
 	{
-		self::$title = $title;
+		return $this->title;
 	}
 
 	/**
-	* Set the Page Description.
-	* @param string $description
-	*/
-	public static function setDescription (string $description=NULL)
+	 * Gets the description.
+	 */
+	public function description() : string
 	{
-		self::$description = $description;
-	}
-
-	/**
-	* Gets the Page Title.
-	*/
-	public static function title () : string
-	{
-		print self::$title;
-	}
-
-	/**
-	* Gets the Page Description.
-	*/
-	public static function description () : string
-	{
-		print self::$description;
+		return $this->description;
 	}
 }

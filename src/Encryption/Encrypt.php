@@ -3,22 +3,22 @@
 namespace Blaze\Encryption;
 
 /**
-* whiteGold - mini PHP Framework
-*
-* @package whiteGold
-* @author Farawe iLyas <faraweilyas@gmail.com>
-* @link http://faraweilyas.me
-*
-* Encrypt Class
-*/
+ * whiteGold - mini PHP Framework
+ *
+ * @package whiteGold
+ * @author Farawe iLyas <faraweilyas@gmail.com>
+ * @link https://faraweilyas.com
+ *
+ * Encrypt Class
+ */
 class Encrypt
 {
 	/**
-	* Generates salt for hashing.
-	* @param int $length
-	* @return string
-	*/
-	private static function generateSalt (int $length) : string
+	 * Generates salt for hashing.
+	 * @param int $length
+	 * @return string
+	 */
+	private static function generateSalt(int $length) : string
 	{
 		// Not 100% unique, not 100% random, but good enough for a salt
 		// MD5 returns 32 characters
@@ -35,11 +35,11 @@ class Encrypt
 	}
 
 	/**
-	* Encrypts password using blowfish.
-	* @param string $password
-	* @return string
-	*/
-	public static function passwordEncrypt (string $password=NULL) : string
+	 * Encrypts password using blowfish.
+	 * @param string $password
+	 * @return string
+	 */
+	public static function passwordEncrypt(string $password=NULL) : string
 	{
 		$hashFormat 	= "$2y$10$";
 		// Tells php to use blowfish with a cost of 10
@@ -51,12 +51,12 @@ class Encrypt
 	}
 
 	/**
-	* Check password with existing hashed password.
-	* @param string $password
-	* @param string $existingHash
-	* @return bool
-	*/
-	public static function passwordCheck (string $password, string $existingHash) : bool
+	 * Check password with existing hashed password.
+	 * @param string $password
+	 * @param string $existingHash
+	 * @return bool
+	 */
+	public static function passwordCheck(string $password, string $existingHash) : bool
 	{
 		// Existing hash contains format and salt at start
 		$hash = crypt($password, $existingHash);
@@ -64,11 +64,11 @@ class Encrypt
 	}
 
 	/**
-	* Generates dynamic passkey.
-    * Output ex: R.year.O.day.O.month.T : eg R15O25O12T
-	* @return string
-	*/
-    public static function dynamicPasskey () : string
+	 * Generates dynamic passkey.
+     * Output ex: R.year.O.day.O.month.T : eg R15O25O12T
+	 * @return string
+	 */
+    public static function dynamicPasskey() : string
     {
         $dateTime 					= date('Y-d-m');
         list($year, $day, $month) 	= explode('-', $dateTime);
@@ -77,11 +77,11 @@ class Encrypt
     }
 
     /**
-    * Two way hash algorithm to encrypt the given string
-    * @param string $string
-    * @return string
-    */
-    public static function blazeEncrypt (string $string) : string
+     * Two way hash algorithm to encrypt the given string
+     * @param string $string
+     * @return string
+     */
+    public static function blazeEncrypt(string $string) : string
     {
         $cryptKey           = 'qJB0rGtIn5UB1xG03efyCp';
         return base64_encode(mcrypt_encrypt(
@@ -90,11 +90,11 @@ class Encrypt
     }
 
     /**
-    * Two way hash algorithm to dencrypt the given string
-    * @param string $encodedString
-    * @return string
-    */
-    public static function blazeDecrypt (string $encodedString) : string
+     * Two way hash algorithm to dencrypt the given string
+     * @param string $encodedString
+     * @return string
+     */
+    public static function blazeDecrypt(string $encodedString) : string
     {
         $cryptKey       = 'qJB0rGtIn5UB1xG03efyCp';
         return rtrim(mcrypt_decrypt(

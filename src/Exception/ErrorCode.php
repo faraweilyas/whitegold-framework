@@ -5,14 +5,14 @@ namespace Blaze\Exception;
 use Blaze\Exception\ErrorHandler;
 
 /**
-* whiteGold - mini PHP Framework
-*
-* @package whiteGold
-* @author Farawe iLyas <faraweilyas@gmail.com>
-* @link http://faraweilyas.me
-*
-* ErrorCode Class.
-*/
+ * whiteGold - mini PHP Framework
+ *
+ * @package whiteGold
+ * @author Farawe iLyas <faraweilyas@gmail.com>
+ * @link https://faraweilyas.com
+ *
+ * ErrorCode Class.
+ */
 class ErrorCode
 {
 	const THROW_NONE    		= 1000;
@@ -23,24 +23,25 @@ class ErrorCode
     const INVALID_DIR 			= 1005;
 
 	/**
-	* Constructor calls exceptionDriver() to throw exception with error codes.
-	* @param int $errorCode
-	* @return 
-	*/
-	public function __construct (int $errorCode=NULL)
+	 * Constructor calls exceptionDriver() to throw exception with error codes.
+	 * @param int $errorCode
+	 * @return 
+	 */
+	public function __construct(int $errorCode=NULL)
 	{
 		static::exceptionDriver($errorCode);
 		return;
 	}
 
 	/**
-	* Throws exception with error codes.
-	* @param int $errorCode
-	* @return 
-	*/
-	final public static function exceptionDriver (int $errorCode=NULL)
+	 * Throws exception with error codes.
+	 * @param int $errorCode
+	 * @return 
+	 */
+	final public static function exceptionDriver(int $errorCode=NULL)
 	{
-		switch ($errorCode) {
+		switch ($errorCode)
+		{
 			case self::EMPTY_VALUE:
 				throw new ErrorHandler("Empty Value.", ErrorCode::EMPTY_VALUE);
 				break;

@@ -7,7 +7,7 @@ namespace Blaze;
  *
  * @package whiteGold
  * @author Farawe iLyas <faraweilyas@gmail.com>
- * @link http://faraweilyas.me
+ * @link https://faraweilyas.com
  *
  * Details class
  */
@@ -40,17 +40,17 @@ abstract class Details
 	 * @param string $title
 	 * @param string $description
 	 */
-	protected function setPageDetails (string $title=NULL, string $description=NULL)
+	protected function setPageDetails(string $title=NULL, string $description=NULL)
 	{
 		$this->title          = $title;
 		$this->description    = $description;
 	}
 
 	/**
-	* Set the title.
-	* @param string $title
-	*/
-	public function setTitle (string $title=NULL)
+	 * Set the title.
+	 * @param string $title
+	 */
+	public function setTitle(string $title=NULL)
 	{
 		$this->title = $title;
 	}

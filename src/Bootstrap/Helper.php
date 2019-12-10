@@ -9,7 +9,7 @@ use Blaze\Validation\Validator as Validate;
 *
 * @package whiteGold
 * @author Farawe iLyas <faraweilyas@gmail.com>
-* @link http://faraweilyas.me
+* @link https://faraweilyas.com
 *
 * Helper Functions
 */
@@ -20,7 +20,7 @@ if (!function_exists('redirectTo')):
 	* @param string $location
 	* @return void
 	*/
-	function redirectTo (string $location=NULL) 
+	function redirectTo(string $location=NULL) 
 	{
 		if (!empty($location)):
 			$scheme = parse_url($location)['scheme'] ?? '';
@@ -40,7 +40,7 @@ if (!function_exists('setConstant')):
 	* @param string $value
 	* @return void
 	*/
-	function setConstant (string $name, string $value) 
+	function setConstant(string $name, string $value) 
 	{
 		defined($name) ? NULL : define($name, $value);
 	}
@@ -53,7 +53,7 @@ if (!function_exists('getConstant')):
 	* @param bool $debug
 	* @return mixed
 	*/
-	function getConstant (string $name, bool $debug=FALSE) 
+	function getConstant(string $name, bool $debug=FALSE) 
 	{
 		$errorMessage = $debug ? "{$name} is not defined" : "";
 		return defined($name) ? constant($name) : $errorMessage;
@@ -80,7 +80,7 @@ if (!function_exists('__intended')):
 	* Redirects to previous visited route.
 	* @return void
 	*/
-	function __intended ()
+	function __intended()
 	{
 		redirectTo(getReferer());
 	}
@@ -140,7 +140,7 @@ if (!function_exists('layout')):
 	* @param array $definedVars
 	* @return bool
 	*/
-	function layout (string $layoutFile=NULL, array $definedVars=[]) : bool
+	function layout(string $layoutFile=NULL, array $definedVars=[]) : bool
 	{
 		extract($GLOBALS, EXTR_OVERWRITE);
 		extract($definedVars, EXTR_SKIP);
@@ -204,7 +204,7 @@ if (!function_exists('fieldNameAsText')):
 	* @param string $fieldName 
 	* @return string
 	*/
-	function fieldNameAsText (string $fieldName) : string
+	function fieldNameAsText(string $fieldName) : string
 	{
 		if (!Validate::hasValue($fieldName)) new ErrorCode(1001);
 		return ucwords(str_replace("_", " ", $fieldName));
@@ -217,7 +217,7 @@ if (!function_exists('stripComma')):
 	* @param string $fieldName 
 	* @return string
 	*/
-	function stripComma (string $fieldName) : string
+	function stripComma(string $fieldName) : string
 	{
 		$length = strlen(trim($fieldName));
 		return substr($fieldName,0,$length-1);
@@ -244,7 +244,7 @@ if (!function_exists('dirScanner')):
 	* @param string $dir
 	* @return array
 	*/
-	function dirScanner (string $dir) : array
+	function dirScanner(string $dir) : array
 	{
 		if (!is_dir($dir)) return [];
 		return !empty(scandir($dir)) ? scandir($dir) : [];
@@ -257,7 +257,7 @@ if (!function_exists('scanDirInDir')):
 	* @param string $dir
 	* @return array
 	*/
-	function scanDirInDir (string $dir) : array
+	function scanDirInDir(string $dir) : array
 	{
 		$dirContents    = array_diff(dirScanner($dir), ['.', '..']);
 		$newDirs        = [];
@@ -281,7 +281,7 @@ if (!function_exists('getFiles')):
 	* @param bool $includePath
 	* @return array
 	*/
-	function getFiles (string $dir=NULL, bool $includePath=FALSE) : array
+	function getFiles(string $dir=NULL, bool $includePath=FALSE) : array
 	{
 		$dir 			= substr($dir, strlen($dir) - 1) == "/" ? $dir : $dir."/";
 		$dirContents 	= array_diff(dirScanner($dir), ['.', '..']);
@@ -305,7 +305,7 @@ if (!function_exists('renameFilesExtention')):
 	* @param \Closure $processNamecallBack
 	* @return bool
 	*/
-	function renameFilesExtention (string $dir=NULL, string $extension=NULL, string $newExtension=NULL, \Closure $processNamecallBack=NULL) : bool
+	function renameFilesExtention(string $dir=NULL, string $extension=NULL, string $newExtension=NULL, \Closure $processNamecallBack=NULL) : bool
 	{
 		$fileNames = getFiles($dir);
 		foreach ($fileNames as $fileName):
@@ -330,7 +330,7 @@ if (!function_exists('getURLContent')):
 	* @param string $url
 	* @return string
 	*/
-	function getURLContent (string $url) : string
+	function getURLContent(string $url) : string
 	{
 		$ch = curl_init();
 		curl_setopt($ch, CURLOPT_URL, $url);
@@ -352,7 +352,7 @@ if (!function_exists('addPrefixToFiles')):
 	* @param array $exceptions
 	* @return bool
 	*/
-	function addPrefixToFiles (string $dir, string $newName, array $exceptions=[]) : bool
+	function addPrefixToFiles(string $dir, string $newName, array $exceptions=[]) : bool
 	{
 		$fileNames = getFiles($dir);
 		foreach ($fileNames as $fileName):
@@ -373,7 +373,7 @@ if (!function_exists('appendFile')):
 	* @param string $directories
 	* @return array
 	*/
-	function appendFile (string $fileName, array $directories) : array
+	function appendFile(string $fileName, array $directories) : array
 	{
 		$dirFiles = [];
 		foreach ($directories as $directory)
@@ -438,7 +438,7 @@ if (!function_exists('sortArray')):
 	* @param array $arrayToSort
 	* @return array
 	*/
-	function sortArray (array $arrayToSort) : array
+	function sortArray(array $arrayToSort) : array
 	{
 		usort($arrayToSort, function($a, $b)
 		{
@@ -456,7 +456,7 @@ if (!function_exists('wordCount')):
 	* @param string $charactersAsWord
 	* @return mixed
 	*/
-	function wordCount (string $word, int $option=1, string $charactersAsWord=NULL)
+	function wordCount(string $word, int $option=1, string $charactersAsWord=NULL)
 	{
 		if (!in_array($option, [0,1,2])) new ErrorCode(1002);
 		return str_word_count($word, $option, $charactersAsWord);
@@ -468,7 +468,7 @@ if (!function_exists('getNavigator')):
 	* Gets navigator
 	* @return string
 	*/
-	function getNavigator () : string
+	function getNavigator() : string
 	{
 		return $_SERVER['HTTP_USER_AGENT'] ?? "";
 	}
@@ -493,7 +493,7 @@ if (!function_exists('validateLink')):
 	* @param string $link
 	* @return string
 	*/
-	function validateLink (string $link=NULL) : string
+	function validateLink(string $link=NULL) : string
 	{
 		$domain = getallheaders()['Host'];
 		$link   = trim($link);
@@ -513,7 +513,7 @@ if (!function_exists('getUserPort')):
 	* Gets user port.
 	* @return string
 	*/
-	function getUserPort () : string
+	function getUserPort() : string
 	{
 		return $_SERVER['REMOTE_PORT'];
 	}
@@ -524,7 +524,7 @@ if (!function_exists('getServerPort')):
 	* Gets server port.
 	* @return string
 	*/
-	function getServerPort () : string
+	function getServerPort() : string
 	{
 		return $_SERVER['SERVER_PORT'];
 	}
@@ -535,7 +535,7 @@ if (!function_exists('getServerIP')):
 	* Gets Server IP.
 	* @return string
 	*/
-	function getServerIP () : string
+	function getServerIP() : string
 	{
 		return $_SERVER['SERVER_ADDR'];
 	}
@@ -546,7 +546,7 @@ if (!function_exists('getHost')):
 	* Get Host
 	* @return string
 	*/
-	function getHost () : string
+	function getHost() : string
 	{
 		$protocol = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off' || $_SERVER['SERVER_PORT'] == 443) ? "https://" : "http://";
 		return $protocol.($_SERVER['HTTP_HOST'] ?? "");
@@ -560,7 +560,7 @@ if (!function_exists('getHostFile')):
 	* @param string $file
 	* @return string
 	*/
-	function getHostFile (string $fileDir, string $file) : string
+	function getHostFile(string $fileDir, string $file) : string
 	{
 		return getHost().str_replace('.', '', $fileDir).$file;
 	}
@@ -571,7 +571,7 @@ if (!function_exists('getSiteURL')):
 	* Gets Site URL.
 	* @return string
 	*/
-	function getSiteURL () : string
+	function getSiteURL() : string
 	{
 		return getHost().$_SERVER['REQUEST_URI'];
 	}
@@ -584,7 +584,7 @@ if (!function_exists('checkForMatch')):
 	* @param string $haystack
 	* @return bool
 	*/
-	function checkForMatch (string $needle, string $haystack) : bool
+	function checkForMatch(string $needle, string $haystack) : bool
 	{
 		return preg_match("/$needle/", $haystack); 
 	}
@@ -595,7 +595,7 @@ if (!function_exists('getUserDevice')):
 	* Gets user device.
 	* @return string
 	*/
-	function getUserDevice () : string
+	function getUserDevice() : string
 	{
 		$devices    = ['iPhone', 'android', 'Windows', 'Andriod'];
 		$agent      = getNavigator();
@@ -612,7 +612,7 @@ if (!function_exists('getUserIP')):
 	* Gets user IP.
 	* @return string
 	*/
-	function getUserIP () : string
+	function getUserIP() : string
 	{
 		$userIP = "";
 		if (isset($_SERVER['HTTP_CLIENT_IP'])) 
@@ -632,7 +632,7 @@ if (!function_exists('getAge')):
 	* @param string $birthdayFullDate
 	* @return int
 	*/
-	function getAge (string $birthdayFullDate) : int
+	function getAge(string $birthdayFullDate) : int
 	{
 		list($year, $month, $day)   = explode("-",$birthdayFullDate); 
 		$yearDiff 		            = date("Y") - $year; 
@@ -651,7 +651,7 @@ if (!function_exists('formatDatetime')):
 	* @param string $seperator
 	* @return string
 	*/
-	function formatDatetime (string $datetime, string $seperator="/") : string
+	function formatDatetime(string $datetime, string $seperator="/") : string
 	{
 		list($date, $time) 			= explode(" ", $datetime);
 		list($year, $month, $day) 	= explode("-", $date); 
@@ -666,7 +666,7 @@ if (!function_exists('dateTimeToTimestamp')):
 	* @param string $datetime
 	* @return int
 	*/
-	function dateTimeToTimestamp (string $datetime) : int
+	function dateTimeToTimestamp(string $datetime) : int
 	{
 		list($date, $time)              = explode(' ', $datetime);
 		list($year, $month, $day)       = explode('-', $date);
@@ -683,7 +683,7 @@ if (!function_exists('datetimeToText')):
 	* @param string $format
 	* @return string
 	*/
-	function datetimeToText (string $datetime, string $format="fulldate") : string
+	function datetimeToText(string $datetime, string $format="fulldate") : string
 	{
 		$unixdatetime   = strtotime($datetime);
 		$dateFormat     = "";
@@ -759,7 +759,7 @@ if (!function_exists('timeDifference')):
 	* @param string $endDate
 	* @return string
 	*/
-	function timeDifference (string $startDate, string $endDate) : string
+	function timeDifference(string $startDate, string $endDate) : string
 	{
 		$startDate 		= strtotime($startDate);
 		$endDate 		= strtotime($endDate);
@@ -776,7 +776,7 @@ if (!function_exists('wordDateTime')):
 	* @param string $datetime
 	* @return string
 	*/
-	function wordDateTime (string $datetime) : string
+	function wordDateTime(string $datetime) : string
 	{
 		$timestamp = dateTimeToTimestamp($datetime);        
 		if ($timestamp > time())
@@ -793,7 +793,7 @@ if (!function_exists('futureTime')):
 	* @param string $datetime
 	* @return string
 	*/
-	function futureTime (string $datetime) : string
+	function futureTime(string $datetime) : string
 	{
 		$timestamp          = dateTimeToTimestamp($datetime);
 		$date               = date('Y/m/d', $timestamp);
@@ -839,7 +839,7 @@ if (!function_exists('backInTime')):
 	* @param string $datetime
 	* @return string
 	*/
-	function backInTime (string $datetime) : string
+	function backInTime(string $datetime) : string
 	{
 		$timestamp          = dateTimeToTimestamp($datetime);
 		$date               = date('Y/m/d', $timestamp);
@@ -886,7 +886,7 @@ if (!function_exists('timeAgo')):
 	* @param bool $fuller
 	* @return int
 	*/
-	function timeAgo (string $datetime=NULL, bool $full=FALSE, bool $fuller=FALSE)
+	function timeAgo(string $datetime=NULL, bool $full=FALSE, bool $fuller=FALSE)
 	{
 		$now    = new DateTime;
 		$ago    = new DateTime($datetime);
@@ -918,7 +918,7 @@ if (!function_exists('sumUP')):
 	* @param int $amount
 	* @return int
 	*/
-	function sumUP (int $number, int $amount) : int
+	function sumUP(int $number, int $amount) : int
 	{
 		$summation = 0;
 		for ($i=0; $i < $amount; $i++) 
@@ -933,7 +933,7 @@ if (!function_exists('readFileContent')):
 	* @param string $file
 	* @return string
 	*/
-	function readFileContent (string $file) : string
+	function readFileContent(string $file) : string
 	{
 		if (!file_exists($file) OR !is_readable($file))
 			return "Can't read specified file: '$file'.";
@@ -946,7 +946,7 @@ if (!function_exists('jsonError')):
 	* Gets last error for json encode
 	* @return void
 	*/
-	function jsonError ()
+	function jsonError()
 	{
 		switch (json_last_error())
 		{
@@ -984,7 +984,7 @@ if (!function_exists('filterObject')):
 	* @param mixed $values
 	* @return array
 	*/
-	function filterObject (array $objects=[], string $column=NULL, ...$values) : array
+	function filterObject(array $objects=[], string $column=NULL, ...$values) : array
 	{
 		if (empty($objects))    return [];
 		if (empty($column))     return [];
@@ -1007,7 +1007,7 @@ if (!function_exists('joinArray')):
 	* @param string $postText
 	* @return string
 	*/
-	function joinArray (array $values, string $join, string $preText=NULL, string $postText=NULL) : string
+	function joinArray(array $values, string $join, string $preText=NULL, string $postText=NULL) : string
 	{
 		return trim($preText.join($join, $values).$postText);
 	}
@@ -1020,7 +1020,7 @@ if (!function_exists('array_mpop')):
 	* @param int $iterate
 	* @return array
 	*/
-	function array_mpop (array $array, int $iterate=1) : array
+	function array_mpop(array $array, int $iterate=1) : array
 	{
 		$arrayLength = count($array);
 	    if ($arrayLength < 1 || $arrayLength < $iterate || $iterate < 1)
@@ -1041,7 +1041,7 @@ if (!function_exists('getSubDomain')):
 	* @param bool $returnString
 	* @return mixed
 	*/
-	function getSubDomain (string $url, int $tldLevel=1, bool $returnString=TRUE)
+	function getSubDomain(string $url, int $tldLevel=1, bool $returnString=TRUE)
 	{
 		$parsedUrl 	= parse_url($url);
 		$host 		= explode('.', $parsedUrl['host']);
@@ -1057,7 +1057,7 @@ if (!function_exists('getRunTime')):
 	* @param int $decimals
 	* @return int | float
 	*/
-	function getRunTime (bool $round=FALSE, int $decimals=0)
+	function getRunTime(bool $round=FALSE, int $decimals=0)
 	{
 		$runTime = microtime(true) - $_SERVER["REQUEST_TIME_FLOAT"];
 		return ($round) ? round($runTime, $decimals) : $runTime;
@@ -1071,7 +1071,7 @@ if (!function_exists('getResourceUsage')):
 	* @param string $index
 	* @return int $seconds
 	*/
-	function getResourceUsage (array $resourceUsageStart, string $index="utime")
+	function getResourceUsage(array $resourceUsageStart, string $index="utime")
 	{
 		$resourceUsageEnd = getrusage();
 	    return ($resourceUsageEnd["ru_$index.tv_sec"] * 1000 + intval($resourceUsageEnd["ru_$index.tv_usec"] / 1000))
@@ -1085,7 +1085,7 @@ if (!function_exists('generateRandomToken')):
 	* @param int $length
 	* @return string
 	*/
-	function generateRandomToken (int $length=16) : string
+	function generateRandomToken(int $length=16) : string
 	{
 		if ($length <= 0) return "";
 		if (version_compare(PHP_VERSION, "7.0.0", "<")):

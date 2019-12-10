@@ -3,14 +3,14 @@
 namespace Blaze\RouterEngine;
 
 /**
-* whiteGold - mini PHP Framework
-*
-* @package whiteGold
-* @author Farawe iLyas <faraweilyas@gmail.com>
-* @link http://faraweilyas.me
-*
-* RouterDaemonInterface interface
-*/
+ * whiteGold - mini PHP Framework
+ *
+ * @package whiteGold
+ * @author Farawe iLyas <faraweilyas@gmail.com>
+ * @link https://faraweilyas.com
+ *
+ * RouterDaemonInterface interface
+ */
 interface RouterDaemonInterface
 {
 	/**
@@ -18,7 +18,7 @@ interface RouterDaemonInterface
 	* @param string $route
 	* @return array
 	*/
-	static function uriGenerator (string $route) : array;
+	static function uriGenerator(string $route) : array;
 
 	/**
 	* Generates array of uris from searched defined routes.
@@ -26,10 +26,10 @@ interface RouterDaemonInterface
 	* @param array $haystack
 	* @return array
 	*/
-	static function searchUris (string $needle, array $haystack) : array;
+	static function searchUris(string $needle, array $haystack) : array;
 
 	/**
 	* Debugger that show steps on how router works.
 	*/
-	static function _DEBUG ();
+	static function _DEBUG();
 }

@@ -11,7 +11,7 @@ use Blaze\Validation\Validator as Validate;
 *
 * @package whiteGold
 * @author Farawe iLyas <faraweilyas@gmail.com>
-* @link http://faraweilyas.me
+* @link https://faraweilyas.com
 *
 * Router Class
 */

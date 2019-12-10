@@ -7,7 +7,7 @@ namespace Blaze\Http;
 *
 * @package whiteGold
 * @author Farawe iLyas <faraweilyas@gmail.com>
-* @link http://faraweilyas.me
+* @link https://faraweilyas.com
 *
 * SessionHelper Class
 * Useful php.ini file settings:

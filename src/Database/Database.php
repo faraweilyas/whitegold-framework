@@ -9,7 +9,7 @@ use Blaze\Logger\Log;
 *
 * @package whiteGold
 * @author Farawe iLyas <faraweilyas@gmail.com>
-* @link http://faraweilyas.me
+* @link https://faraweilyas.com
 *
 * Database Class
 */
@@ -167,11 +167,11 @@ class Database
 	* Confirms result from database query
 	* @param mixed
 	*/
-	private function confirmQuery ($result)
+	private function confirmQuery($result)
 	{
 		if ($result) return;
 	    $outputMessage = "";
-		if (DEPLOYMENT_STATE == "local"):
+		if (getConstant('DEPLOYMENT_STATE', TRUE) == "local"):
 		    $outputMessage = "Database query failed: ".mysqli_error($this->connection)."<br /><br />";
 		    $outputMessage .= "Last SQL query: ".static::lastQuery();
 	    else:

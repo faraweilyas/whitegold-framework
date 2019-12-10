@@ -8,7 +8,7 @@ namespace Blaze\Database;
 *
 * @package whiteGold
 * @author Farawe iLyas <faraweilyas@gmail.com>
-* @link http://faraweilyas.me
+* @link https://faraweilyas.com
 *
 * DatabaseParts Class
 */
@@ -19,12 +19,12 @@ class DatabaseParts
 	* @param string $sql
 	* @return array
 	*/
-	final public static function findBySql (string $sql) : array
+	final public static function findBySql(string $sql) : array
 	{
         $dbObject 		= Database::getInstance();
 		$resultSet 		= $dbObject->query($sql);
 		$objectArray 	= [];
-		while ($row = Database::fetchAssoc($resultSet))
+		while($row = Database::fetchAssoc($resultSet))
 		{
 			$objectArray[] = static::instantiate($row);
 		}
@@ -36,14 +36,10 @@ class DatabaseParts
 	* @param array $record
 	* @return object
 	*/
-	final public static function instantiate (array $record)
+	final public static function instantiate(array $record)
 	{
-		$className 	= get_called_class();
-		$object 	= new $className;
-		foreach ($record as $attribute => $value):
-			$object->$attribute = $value;
-		endforeach;
-		return $object;
+		$className = get_called_class();
+		return new $className($record);
 	}
 
 	/**
@@ -104,7 +100,7 @@ class DatabaseParts
 	* @param array
 	* @return string
 	*/
-	final public function generateQueryForUPdate () : string
+	final public function generateQueryForUpdate () : string
 	{
 		$generatedArray = [];
 		foreach ($this->sanitizedAttributes() as $key => $value):

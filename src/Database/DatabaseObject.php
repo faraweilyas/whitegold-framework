@@ -9,41 +9,82 @@ use Blaze\Validation\Validator as Validate;
 *
 * @package whiteGold
 * @author Farawe iLyas <faraweilyas@gmail.com>
-* @link http://faraweilyas.me
+* @link https://faraweilyas.com
 *
 * DatabaseObject Class
 */
 class DatabaseObject extends DatabaseParts
 {
-	/** 
+	/**
 	* Stores the database table name
 	* @var string
 	*/
 	protected static $tableName 		= "";
 
-	/** 
+	/**
 	* Stores the database columns
 	* @var array
 	*/
 	protected static $databaseFields 	= [];
 
-	/** 
+	/**
 	* Stores the affected rows
 	* @var int
 	*/
 	protected static $affectedRows 		= 0;
 
-	/** 
+	/**
 	* Stores the found database rows as an object.
 	* @var mixed
 	*/
 	protected static $foundObject;
 
+	/**
+	* Stores the found database rows as an array.
+	* @var array
+	*/
+    protected $record;
+
+	/**
+	* Constructor to set record upon initialization.
+	* @param array $record
+	* @return void
+	*/
+    public function __construct(array $record=[])
+    {
+        $this->record = $record;
+    }
+
+	/**
+	* Magic set method.
+	* @param string $property
+	* @param mixed $value
+	* @return mixed
+	*/
+    public function __set(string $property, $value)
+    {
+        return $this->record[$property] = $value;
+    }
+
+	/**
+	* Magic get method.
+	* @param string $property
+	* @return mixed
+	*/
+    public function __get(string $property)
+    {
+    	if (array_key_exists($property, $this->record))
+    		return $this->record[$property];
+    	if (property_exists($this, $property))
+    		return $this->$property;
+		return NULL;
+    }
+
     /**
     * Returns database table name property
     * @return string
     */
-	public static function getTableName () : string
+	public static function getTableName() : string
 	{
 		return static::$tableName;
 	}
@@ -52,7 +93,7 @@ class DatabaseObject extends DatabaseParts
     * Returns database fields property
     * @return array
     */
-	public static function getDatabaseFields () : array
+	public static function getDatabaseFields() : array
 	{
 		return static::$databaseFields;
 	}
@@ -61,7 +102,7 @@ class DatabaseObject extends DatabaseParts
     * Returns foundObject property
     * @return mixed
     */
-	public static function getFoundObject ()
+	public static function getFoundObject()
 	{
 		return static::$foundObject;
 	}
@@ -71,7 +112,7 @@ class DatabaseObject extends DatabaseParts
 	* A new record won't have an id yet.
 	* @return bool
 	*/
-	public function save () : bool
+	public function save() : bool
 	{
 		return isset($this->id) ? $this->update() : $this->create();
 	}
@@ -80,7 +121,7 @@ class DatabaseObject extends DatabaseParts
 	* Create new record in the database.
 	* @return bool
 	*/
-	public function create () : bool
+	public function create() : bool
 	{
         $dbObject 	= Database::getInstance();
 		$attributes = $this->sanitizedAttributes();
@@ -98,10 +139,10 @@ class DatabaseObject extends DatabaseParts
 	* Update new record in the database.
 	* @return bool
 	*/
-	public function update () : bool
+	public function update() : bool
 	{
         $dbObject 	= Database::getInstance();
-		$sqlQuery 	= "UPDATE ".static::$tableName." SET ".$this->generateQueryForUPdate();
+		$sqlQuery 	= "UPDATE ".static::$tableName." SET ".$this->generateQueryForUpdate();
 		$sqlQuery  .= " WHERE id = ". $dbObject->escapeValue($this->id);
 		$result 	= $dbObject->query($sqlQuery);
     	return ($result) ? TRUE : FALSE;
@@ -112,7 +153,7 @@ class DatabaseObject extends DatabaseParts
 	* @param int $id
 	* @return bool
 	*/
-	public function deleteRow (int $id) : bool
+	public function deleteRow(int $id) : bool
 	{
 		$this->id = $id;
 		return $this->delete() ? TRUE : FALSE;
@@ -122,7 +163,7 @@ class DatabaseObject extends DatabaseParts
 	* Delete a record from the database
 	* @return bool
 	*/
-	public function delete () : bool
+	public function delete() : bool
 	{
         $dbObject  = Database::getInstance();
 		$sqlQuery  = "DELETE FROM ".static::$tableName." WHERE id=";
@@ -139,7 +180,7 @@ class DatabaseObject extends DatabaseParts
 	* @param string $joinOperator
 	* @return bool
 	*/
-	public static function deleteWhere (string $column, array $operatorValue, string $joinOperator="AND") : bool
+	public static function deleteWhere(string $column, array $operatorValue, string $joinOperator="AND") : bool
 	{
 		$joinOperator 	= static::validateOperator($joinOperator, "AND");
 		$expression 	= static::generateValue($column, $operatorValue, $joinOperator);
@@ -157,7 +198,7 @@ class DatabaseObject extends DatabaseParts
 	* @param string $expressionOperator
 	* @return bool
 	*/
-	public static function deleteMultipleWhere (array $columnsOperatorsValues, string $joinOperator="AND", string $expressionOperator="AND") : bool
+	public static function deleteMultipleWhere(array $columnsOperatorsValues, string $joinOperator="AND", string $expressionOperator="AND") : bool
 	{
 		$joinOperator 	= static::validateOperator($joinOperator, "AND");
 		$expressions 	= static::generateKeyValue($columnsOperatorsValues, $expressionOperator);
@@ -173,7 +214,7 @@ class DatabaseObject extends DatabaseParts
 	* @param string $order
 	* @return array
 	*/
-	public static function findAll (string $order="DESC") : array
+	public static function findAll(string $order="DESC") : array
 	{
 		$order = static::validateOrder($order);
 		return static::findBySql("SELECT * FROM ".static::$tableName." ORDER BY id {$order}");
@@ -186,7 +227,7 @@ class DatabaseObject extends DatabaseParts
 	* @param int $limit
 	* @return mixed
 	*/
-	public static function findById (int $id, string $operator="=", int $limit=1)
+	public static function findById(int $id, string $operator="=", int $limit=1)
 	{
         $id 		= Database::getInstance()->escapeValue($id);
 		$operator 	= static::validateOperator($operator, '=');
@@ -199,7 +240,7 @@ class DatabaseObject extends DatabaseParts
 	* @param string $order
 	* @return mixed
 	*/
-	public static function findSome (int $limit=0, string $order="DESC")
+	public static function findSome(int $limit=0, string $order="DESC")
 	{
 		$order = static::validateOrder($order);
 		return static::limitFindBySql("SELECT * FROM ".static::$tableName." ORDER BY id {$order}", $limit);
@@ -212,7 +253,7 @@ class DatabaseObject extends DatabaseParts
 	* @param string $order
 	* @return mixed
 	*/
-	public static function findColumn (string $column, int $limit=0, string $order="DESC")
+	public static function findColumn(string $column, int $limit=0, string $order="DESC")
 	{
 		$order 		= static::validateOrder($order);
         $dbObject 	= Database::getInstance();
@@ -227,7 +268,7 @@ class DatabaseObject extends DatabaseParts
 	* @param string $order
 	* @return mixed
 	*/
-	public static function findColumns (array $columns, int $limit=0, string $order="DESC")
+	public static function findColumns(array $columns, int $limit=0, string $order="DESC")
 	{
 		$order 	   	= static::validateOrder($order);
         $dbObject  	= Database::getInstance();
@@ -243,7 +284,7 @@ class DatabaseObject extends DatabaseParts
 	* @param int $limit
 	* @return mixed
 	*/
-	public static function findByColumn (string $column, array $operatorValue, string $joinOperator="AND", int $limit=1)
+	public static function findByColumn(string $column, array $operatorValue, string $joinOperator="AND", int $limit=1)
 	{
 		$joinOperator 	= static::validateOperator($joinOperator, "AND");
 		$expression 	= static::generateValue($column, $operatorValue, $joinOperator);
@@ -259,7 +300,7 @@ class DatabaseObject extends DatabaseParts
 	* @param int $limit
 	* @return mixed
 	*/
-	public static function findMultipleColumn (array $columnsOperatorsValues, string $joinOperator="AND", string $expressionOperator="AND", int $limit=1)
+	public static function findMultipleColumn(array $columnsOperatorsValues, string $joinOperator="AND", string $expressionOperator="AND", int $limit=1)
 	{
 		$joinOperator 	= static::validateOperator($joinOperator, 'AND');
 		$expressions 	= static::generateKeyValue($columnsOperatorsValues, $expressionOperator);
@@ -277,7 +318,7 @@ class DatabaseObject extends DatabaseParts
 	* @param int $limit
 	* @return mixed
 	*/
-	public static function findWhere (string $column, array $operatorValue, string $order="DESC", string $joinOperator="AND", int $limit=0)
+	public static function findWhere(string $column, array $operatorValue, string $order="DESC", string $joinOperator="AND", int $limit=0)
 	{
 		$joinOperator 	= static::validateOperator($joinOperator, "AND");
 		$expression 	= static::generateValue($column, $operatorValue, $joinOperator);
@@ -294,7 +335,7 @@ class DatabaseObject extends DatabaseParts
 	* @param int $limit
 	* @return mixed
 	*/
-	public static function findMultipleWhere (array $columnsOperatorsValues, string $joinOperator="AND", string $order="DESC", string $expressionOperator="AND", int $limit=0)
+	public static function findMultipleWhere(array $columnsOperatorsValues, string $joinOperator="AND", string $order="DESC", string $expressionOperator="AND", int $limit=0)
 	{
 		$joinOperator 	= static::validateOperator($joinOperator, 'AND');
 		$expressions 	= static::generateKeyValue($columnsOperatorsValues, $expressionOperator);
@@ -309,7 +350,7 @@ class DatabaseObject extends DatabaseParts
 	* @param string $order
 	* @return array
 	*/
-	public static function groupBy (string $field, string $order="DESC") : array
+	public static function groupBy(string $field, string $order="DESC") : array
 	{
 		$order = static::validateOrder($order);
 		return static::findBySql("SELECT * FROM ".static::$tableName." GROUP BY {$field} ORDER BY id {$order}");
@@ -323,7 +364,7 @@ class DatabaseObject extends DatabaseParts
 	* @param string $order
 	* @return mixed
 	*/
-	public static function search (string $column, string $searchQ, int $limit=0, string $order="DESC")
+	public static function search(string $column, string $searchQ, int $limit=0, string $order="DESC")
 	{
 		$order = static::validateOrder($order);
 		return static::limitFindBySql("SELECT * FROM ".static::$tableName." WHERE {$column} LIKE '%$searchQ%' ORDER BY id {$order}", $limit);
@@ -333,7 +374,7 @@ class DatabaseObject extends DatabaseParts
 	* Count all database entries
 	* @return int
 	*/
-	public static function countAll () : int
+	public static function countAll() : int
 	{
         $dbObject  	= Database::getInstance();
 		$sqlQuery 	= "SELECT COUNT(*) FROM ".static::$tableName;
@@ -349,7 +390,7 @@ class DatabaseObject extends DatabaseParts
 	* @param string $joinOperator
 	* @return int
 	*/
-	public static function countWhere (string $column, array $operatorValue, string $joinOperator="AND") : int
+	public static function countWhere(string $column, array $operatorValue, string $joinOperator="AND") : int
 	{
 		$joinOperator 	= static::validateOperator($joinOperator, "AND");
 		$expression 	= static::generateValue($column, $operatorValue, $joinOperator);
@@ -366,7 +407,7 @@ class DatabaseObject extends DatabaseParts
 	* @param string $expressionOperator
 	* @return int
 	*/
-	public static function countMultipleWhere (array $columnsOperatorsValues, string $joinOperator="AND", string $expressionOperator="AND") : int
+	public static function countMultipleWhere(array $columnsOperatorsValues, string $joinOperator="AND", string $expressionOperator="AND") : int
 	{
 		$joinOperator 	= static::validateOperator($joinOperator, 'AND');
 		$expressions 	= static::generateKeyValue($columnsOperatorsValues, $expressionOperator);
@@ -382,7 +423,7 @@ class DatabaseObject extends DatabaseParts
 	* @param mixed $secondProperty
 	* @return mixed
 	*/
-	public static function checkProperty ($firstProperty='', $secondProperty='')
+	public static function checkProperty($firstProperty='', $secondProperty='')
 	{
 		return Validate::hasValue($firstProperty) ? $firstProperty : $secondProperty;
 	}

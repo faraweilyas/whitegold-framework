@@ -89,28 +89,6 @@ class Router extends RouterParts
 		$routName 						= !empty($routName) ? $routName : "";
 		static::$namedRoutes[$route] 	= $routName;
 	}
-	
-	/**
-	* Checks for routes that matches the requested route.
-	*/
-	final protected static function validateRequestedRoute ()
-	{
-		if (static::routeMatch()):
-			$matched_route 	= static::$_matchedRoute['route'];
-			$method 		= static::$_methods[static::$_matchedRoute['method_key']];
-			if (!static::caller($method)):
-				echo "Caller Error";
-			endif;
-		else:
-			if (!file_exists(getConstant('VIEW', TRUE).'AppStates/404.php')):
-				$message  = "404 Error Found: cause the requested page wasn't found. <br />";
-				$message .= "If you're the admin you can specify your 404 Error file in your ";
-				$message .= "'".getConstant('VIEW', TRUE)."AppStates/' directory and name it '404.php'";
-				print $message; exit;
-			endif;
-			RouterView::make("AppStates.404");
-		endif;
-	}
 
 	/**
 	* Checks the app state before routing.
@@ -121,10 +99,38 @@ class Router extends RouterParts
 		if (!file_exists(getConstant('VIEW', TRUE).'AppStates/UC.php')):
 			$message  = "The APP is in maintenance mode. <br />If you're the admin you can specify your maintenance file in your ";
 			$message .= "'".getConstant('VIEW', TRUE)."AppStates/' directory and name it 'UC.php'";
-			print $message; exit;
+			print $message;
+			http_response_code(400);
+			exit;
 		endif;
 		RouterView::make('AppStates.UC');
-		exit;			
+		http_response_code(200);
+		exit;
+	}
+	
+	/**
+	* Checks for routes that matches the requested route.
+	*/
+	final protected static function validateRequestedRoute ()
+	{
+		if (static::routeMatch()):
+			$matched_route 	= static::$_matchedRoute['route'];
+			$method 		= static::$_methods[static::$_matchedRoute['method_key']];
+			if (!static::caller($method)):
+				http_response_code(400);
+				echo "Caller Error";
+			endif;
+			http_response_code(200);
+		else:
+			if (!file_exists(getConstant('VIEW', TRUE).'AppStates/404.php')):
+				$message  = "404 Error Found: cause the requested page wasn't found. <br />";
+				$message .= "If you're the admin you can specify your 404 Error file in your ";
+				$message .= "'".getConstant('VIEW', TRUE)."AppStates/' directory and name it '404.php'";
+				print $message; exit;
+			endif;
+			RouterView::make("AppStates.404");
+			http_response_code(404);
+		endif;
 	}
 
 	/**

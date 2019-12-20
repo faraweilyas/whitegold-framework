@@ -55,31 +55,6 @@ class DatabaseObject extends DatabaseParts
         $this->record = $record;
     }
 
-	/**
-	* Magic set method.
-	* @param string $property
-	* @param mixed $value
-	* @return mixed
-	*/
-    public function __set(string $property, $value)
-    {
-        return $this->record[$property] = $value;
-    }
-
-	/**
-	* Magic get method.
-	* @param string $property
-	* @return mixed
-	*/
-    public function __get(string $property)
-    {
-    	if (array_key_exists($property, $this->record))
-    		return $this->record[$property];
-    	if (property_exists($this, $property))
-    		return $this->$property;
-		return NULL;
-    }
-
     /**
     * Returns database table name property
     * @return string
@@ -106,6 +81,34 @@ class DatabaseObject extends DatabaseParts
 	{
 		return static::$foundObject;
 	}
+
+	/**
+	* Magic get method.
+	* @param string $property
+	* @return mixed
+	*/
+    public function __get(string $property)
+    {
+    	if (array_key_exists($property, $this->record))
+    		return $this->record[$property];
+    	if (property_exists($this, $property))
+    		return $this->$property;
+		return NULL;
+    }
+
+	/**
+	 * Get method to get record.
+	 * @return $this
+	 */
+    public function get()
+    {
+		$className 	= get_called_class();
+		$object 	= new $className;
+		foreach ($this->record as $attribute => $value):
+			$object->$attribute = $value;
+		endforeach;
+		return $object;
+    }
 
 	/**
 	* Update or Create new records.

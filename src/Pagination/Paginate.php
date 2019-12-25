@@ -24,7 +24,7 @@ class Paginate
 
     /**
     * Constructor sets pagination properties
-    * @param int $page
+    * @param int $currentPage
     * @param int $perPage
     * @param int $adjacent
     * @param int $totalCount

@@ -22,14 +22,9 @@ if (!function_exists('redirectTo')):
 	*/
 	function redirectTo(string $location=NULL) 
 	{
-		if (!empty($location)):
-			$scheme = parse_url($location)['scheme'] ?? '';
-			if (empty($scheme) || !in_array($scheme, ['https', 'http'])):
-				$location = Route::redirectRoute($location);
-			endif;
-			header("Location: {$location}");
-			exit;
-		endif;
+		$location = Route::redirectRoute($location);
+		header("Location: {$location}");
+		exit;
 	}
 endif;
 

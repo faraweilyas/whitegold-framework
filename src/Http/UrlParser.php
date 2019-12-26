@@ -73,9 +73,9 @@ class UrlParser
 
 	/**
 	 * Parse the url.
-	 * @return Url
+	 * @return UrlParser
 	 */
-	public function parseUrl() : Url
+	public function parseUrl() : UrlParser
 	{
 		$url = parse_url($this->link);
 		// port, user, pass

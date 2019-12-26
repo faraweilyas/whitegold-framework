@@ -3,9 +3,9 @@
 namespace Blaze\Http;
 
 /**
- * Url Class
+ * UrlParser Class
  */
-class Url
+class UrlParser
 {
 	/**
 	 * Link to parse.
@@ -129,6 +129,16 @@ class Url
 	final public function isThereHost() : bool
 	{
 		return !empty($this->getHost()) ? TRUE : FALSE;
+	}
+
+	/**
+	 * Is there host.
+	 * @param string $host
+	 * @return bool
+	 */
+	final public function isHostTheSame(string $host) : bool
+	{
+		return ($this->getHost() == $host) ? TRUE : FALSE;
 	}
 
 	/**

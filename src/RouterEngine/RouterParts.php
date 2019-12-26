@@ -2,6 +2,7 @@
 
 namespace Blaze\RouterEngine;
 
+use Blaze\Http\UrlParser;
 use Blaze\Exception\ErrorCode;
 use Blaze\Validation\Validator as Validate;
 use Blaze\RouterEngine\RouterDaemonInterface;
@@ -391,12 +392,14 @@ abstract class RouterParts implements RouterDaemonInterface
 	}
 	
 	/**
-	* It gets the raw GET url parameter for proper evaluation against route.
-	* @param string $route
-	* @return string
-	*/
-	final protected static function routeHelper (string $route) : string
+	 * It gets the raw GET url parameter for proper evaluation against route.
+	 * @param string $route
+	 * @return string
+	 */
+	final protected static function routeHelper(string $route) : string
 	{
+		$urlParser 		= new UrlParser($route);
+		if ($urlParser->isThereScheme()) return $route;
 		static::$route 	= empty(static::$route) ? static::getRequestedRoute() : static::$route;
 		$occurences 	= substr_count(static::$route, "/");
 		$route 			= "./".ltrim($route, "./");

@@ -44,8 +44,21 @@ abstract class Details
 	 */
 	public function setPageDetails(string $title=NULL, string $description=NULL)
 	{
-		$this->title          = $title;
-		$this->description    = $description;
+		$this->title          = !empty($title) ? $title : $this->title;
+		$this->description    = !empty($description) ? $description : $this->description;
+		return $this;
+	}
+
+	/**
+	 * Clear the page details.
+	 * @param string $title
+	 * @param string $description
+	 * @return Details
+	 */
+	public function clearPageDetails()
+	{
+		$this->title          = "";
+		$this->description    = "";
 		return $this;
 	}
 
@@ -77,7 +90,7 @@ abstract class Details
 	 */
 	public function title() : string
 	{
-		return $this->title;
+		return $this->title ?? "";
 	}
 
 	/**
@@ -86,6 +99,6 @@ abstract class Details
 	 */
 	public function description() : string
 	{
-		return $this->description;
+		return $this->description ?? "";
 	}
 }

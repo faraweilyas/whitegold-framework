@@ -29,6 +29,7 @@ abstract class Details
 	 * Constructor to set the page details.
 	 * @param string $title
 	 * @param string $description
+	 * @return void
 	 */
 	public function __construct(string $title=NULL, string $description=NULL)
 	{
@@ -39,33 +40,40 @@ abstract class Details
 	 * Set the page details.
 	 * @param string $title
 	 * @param string $description
+	 * @return Details
 	 */
-	protected function setPageDetails(string $title=NULL, string $description=NULL)
+	public function setPageDetails(string $title=NULL, string $description=NULL)
 	{
 		$this->title          = $title;
 		$this->description    = $description;
+		return $this;
 	}
 
 	/**
 	 * Set the title.
 	 * @param string $title
+	 * @return Details
 	 */
 	public function setTitle(string $title=NULL)
 	{
 		$this->title = $title;
+		return $this;
 	}
 
 	/**
 	 * Set the description.
 	 * @param string $description
+	 * @return Details
 	 */
 	public function setDescription(string $description=NULL)
 	{
 		$this->description = $description;
+		return $this;
 	}
 
 	/**
 	 * Gets the title.
+	 * @return void
 	 */
 	public function title() : string
 	{
@@ -74,6 +82,7 @@ abstract class Details
 
 	/**
 	 * Gets the description.
+	 * @return void
 	 */
 	public function description() : string
 	{

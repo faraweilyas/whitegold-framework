@@ -2,8 +2,6 @@
 
 namespace Blaze\Pagination;
 
-use Blaze\Pagination\BootstrapTemplate;
-
 /**
  * whiteGold - mini PHP Framework
  *

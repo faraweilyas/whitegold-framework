@@ -15,7 +15,7 @@ namespace Blaze\Pagination;
 class BaseTemplate
 {
 	public $prefix = "<nav><ul>";
-	public $postfix = "</nav></ul>";
+	public $postfix = "</ul></nav>";
 	public $previousLink = "<li><a href='%s'>Previous</a></li>";
 	public $nextLink = "<li><a href='%s'>Next</a></li>";
 	public $elipsesLink = "<li><a href=''>...</a></li>";

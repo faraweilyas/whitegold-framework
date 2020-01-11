@@ -434,18 +434,18 @@ abstract class RouterParts implements RouterDaemonInterface
 	*/
 	public static function _DEBUG ()
 	{
-		echo "<h4>Step 1: Registered Routes</h4>";
-		echo '<tt><pre>'.var_export(static::$_uri, TRUE).'</pre></tt>';
-
-		echo "<h4>Step 2: Registered Methods</h4>";
-		echo '<tt><pre>'.var_export(static::$_methods, TRUE).'</pre></tt>';
-
-		echo "<h4>Step 3: Requested Get Route</h4>";
+		echo "<h4>Step 1: Requested Get Route</h4>";
 		static::getUrl();
 		echo '<tt><pre>'.var_export(static::$_getRoute, TRUE).'</pre></tt>';
 
-		echo "<h4>Step 4: Define the Requested Get Route</h4>";
+		echo "<h4>Step 2: Define the Requested Get Route</h4>";
 		echo '<tt><pre>'.var_export(static::defineRequestedRoute(), TRUE).'</pre></tt>';
+
+		echo "<h4>Step 3: Registered Routes</h4>";
+		echo '<tt><pre>'.var_export(static::$_uri, TRUE).'</pre></tt>';
+
+		echo "<h4>Step 4: Registered Methods</h4>";
+		echo '<tt><pre>'.var_export(static::$_methods, TRUE).'</pre></tt>';
 
 		echo "<h4>Step 5: Routes That Matches the Length of Requested Route</h4>";
 		echo '<tt><pre>'.var_export(static::routeLengthMatch(), TRUE).'</pre></tt>';
@@ -468,18 +468,20 @@ abstract class RouterParts implements RouterDaemonInterface
 		echo '<tt><pre>'.var_export(static::defineRouteVariable($matchedRoutes), TRUE).'</pre></tt>';
 
 		echo "<h4>Step 10: Check for routes that match the requested route</h4>";
-		echo '<tt><pre>'.var_export(static::checkMatchedRoutes($matchedRoutes), TRUE).'</pre></tt>';
+		$checkedMatchedRoutes = static::checkMatchedRoutes($matchedRoutes);
+		echo '<tt><pre>'.var_export($checkedMatchedRoutes, TRUE).'</pre></tt>';
 
 		echo "<h4>Step 11: Arguments for requested route method</h4>";
 		static::setVariables();
 		echo '<tt><pre>'.var_export(static::$_arguments, TRUE).'</pre></tt>';
 
 		echo "<h4>Step 12: Call method that belongs to the route</h4>";
-		echo '<tt><pre>'.var_export(static::caller(
-			static::$_methods[static::$_matchedRoute['method_key']]
-		), TRUE).'</pre></tt>';
+		$methodKey = array_keys($checkedMatchedRoutes)[0] ?? 0;
+		// static::caller(static::$_methods[$methodKey]) // call method assigned to route
+		echo '<tt><pre>'.var_export(static::$_methods[$methodKey], TRUE).'</pre></tt>';
 
 		echo "<h4>Final Step: Found Route</h4>";
-		echo '<tt><pre>'.var_export(static::$_matchedRoute, TRUE).'</pre></tt>';
+		echo '<tt><pre>'.var_export(array_pop($checkedMatchedRoutes), TRUE).'</pre></tt>';
+		exit;
 	}
 }

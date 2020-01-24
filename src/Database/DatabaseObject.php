@@ -83,7 +83,7 @@ class DatabaseObject extends DatabaseParts
 	}
 
 	/**
-	* Magic get method.
+	* Magic __get method.
 	* @param string $property
 	* @return mixed
 	*/
@@ -94,6 +94,17 @@ class DatabaseObject extends DatabaseParts
     	if (property_exists($this, $property))
     		return $this->$property;
 		return NULL;
+    }
+
+	/**
+	* Magic __isset method.
+	* @param string $property
+	* @return mixed
+	*/
+    public function __isset(string $property)
+    {
+    	$property = $this->record[$property] ?? NULL;
+        return isset($property);
     }
 
 	/**

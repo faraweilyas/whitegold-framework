@@ -690,6 +690,9 @@ if (!function_exists('datetimeToText')):
 			case 'fulldates':
 				$dateFormat = "%B %d, %Y at %I:%M %p";
 				break;
+			case 'fulldatesz':
+				$dateFormat = "%d %B, %I:%M %p";
+				break;
 			case 'date':
 				$dateFormat = "%m/%d/%Y";
 				break;
@@ -739,7 +742,7 @@ if (!function_exists('datetimeToText')):
 				$dateFormat = "%a";
 				break;      
 			default:
-				$dateFormat = "%B %d, %Y at %I:%M %p";
+				$dateFormat = $format;
 				break;
 		}
 		return strftime($dateFormat, $unixdatetime);

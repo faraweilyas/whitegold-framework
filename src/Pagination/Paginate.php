@@ -241,7 +241,7 @@ class Paginate
 	 */
 	final public function setQueryLink(string $queryLink="")
 	{
-		$this->queryLink = $queryLink;
+		$this->queryLink = !empty($queryLink) ? $queryLink : $this->queryLink;
 		return $this;
 	}
 

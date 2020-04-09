@@ -62,7 +62,7 @@ if (!function_exists('minifyHTMLOutput')):
 	*/
 	function minifyHTMLOutput ($buffer)
 	{
-		$search     = ['/\>[^\S ]+/s', '/[^\S ]+\</s', '/(\s)+/s'];
+		$search     = ['/\>[^\S ]+/s', '/[^\S ]+\</s', '/(\s)+/s', '/<!--(.|\s)*?-->/'];
 		$replace    = ['>', '<', '\\1'];
 		if (preg_match("/\<html/i", $buffer) == 1 && preg_match("/\<\/html\>/i", $buffer) == 1)
 			$buffer = preg_replace($search, $replace, $buffer);

@@ -1,6 +1,6 @@
 <?php
 
-namespace Blaze;
+namespace Blaze\Support;
 
 /**
  * whiteGold - mini PHP Framework

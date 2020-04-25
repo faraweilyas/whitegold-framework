@@ -19,6 +19,11 @@ class Collection implements Iterator
 
 	public function __construct($items)
 	{
+		$this->setItems($items);
+	}
+
+	public function setItems($items)
+	{
 		$this->items = $items;
 	}
 
@@ -52,6 +57,11 @@ class Collection implements Iterator
 		return empty($this->items);
 	}
 
+	public function has($value) : bool
+	{
+		return in_array($value, $this->items);
+	}
+
 	public function returnItem($item)
 	{
 		return is_array($item) ? new self($item) : $item;
@@ -60,7 +70,8 @@ class Collection implements Iterator
 	public function refresh()
 	{
 		if ($this->isEmpty()) return $this->returnItem([]);
-		return $this->returnItem($this->rewind());
+		$this->rewind();
+		return $this->returnItem($this->items);
 	}
 
 	public function first()
@@ -75,7 +86,7 @@ class Collection implements Iterator
 		return $this->returnItem(end($this->items));
 	}
 
-	public function count()
+	public function count() : int
 	{
 		return count($this->items);
 	}
@@ -85,46 +96,72 @@ class Collection implements Iterator
 		return ($this->isEmpty()) ? [] : $this->items;
 	}
 
-	public function zip(... $items)
+	public function keys() : Collection
 	{
 		if ($this->isEmpty()) return $this->returnItem([]);
-		return $this->returnItem(array_map(NULL, $this->items, ...$items));
+		return $this->returnItem(array_keys($this->items));
 	}
 
-	public function pluck(string $column, string $index=NULL)
+	public function values() : Collection
+	{
+		if ($this->isEmpty()) return $this->returnItem([]);
+		return $this->returnItem(array_values($this->items));
+	}
+
+	public function sum() : int
+	{
+		if ($this->isEmpty()) return 0;
+		return $this->returnItem(array_sum($this->items));
+	}
+
+	public function map(callable $callback=NULL, ... $items) : Collection
+	{
+		if ($this->isEmpty()) return $this->returnItem([]);
+		return $this->returnItem(array_map($callback, $this->items, ...$items));
+	}
+
+	public function zip(... $items) : Collection
+	{
+		if ($this->isEmpty()) return $this->returnItem([]);
+		return $this->map(NULL, ...$items);
+	}
+
+	public function pluck(string $column, string $index=NULL) : Collection
 	{
 		if ($this->isEmpty()) return $this->returnItem([]);
 		return $this->returnItem(array_column($this->items, $column, $index));
 	}
 
-	public function trim()
+	public function trim() : Collection
 	{
 		if ($this->isEmpty()) return $this->returnItem([]);
-		return $this->returnItem(array_map('trim', $this->items));
+		return $this->map('trim');
 	}
 
-	public function uppercase()
+	public function uppercase() : Collection
 	{
 		if ($this->isEmpty()) return $this->returnItem([]);
-		return $this->returnItem(array_map('strtoupper', $this->items));
+		return $this->map('strtoupper');
 	}
 
-	public function lowercase()
+	public function lowercase() : Collection
 	{
 		if ($this->isEmpty()) return $this->returnItem([]);
-		return $this->returnItem(array_map('strtolower', $this->items));
+		return $this->map('strtolower');
 	}
 
-	public function ucwords()
+	public function ucwords() : Collection
 	{
 		if ($this->isEmpty()) return $this->returnItem([]);
-		return $this->returnItem(array_map('ucwords', $this->lowercase()->items()));
+		$this->setItems($this->lowercase()->items());
+		return $this->map('ucwords');
 	}
 
-	public function ucfirst()
+	public function ucfirst() : Collection
 	{
 		if ($this->isEmpty()) return $this->returnItem([]);
-		return $this->returnItem(array_map('ucfirst', $this->lowercase()->items()));
+		$this->setItems($this->lowercase()->items());
+		return $this->map('ucfirst');
 	}
 
 	// Sorting type flags:
@@ -132,7 +169,7 @@ class Collection implements Iterator
 	// SORT_NUMERIC - compare items numerically
 	// SORT_STRING - compare items as strings
 	// SORT_LOCALE_STRING - compare items as strings, based on the current locale.
-	public function unique(int $sort_flags=SORT_STRING)
+	public function unique(int $sort_flags=SORT_STRING) : Collection
 	{
 		if ($this->isEmpty()) return $this->returnItem([]);
 		return $this->returnItem(array_unique($this->items, $sort_flags));
@@ -145,7 +182,7 @@ class Collection implements Iterator
 	// SORT_LOCALE_STRING - compare items as strings, based on the current locale. It uses the locale, which can be changed using setlocale()
 	// SORT_NATURAL - compare items as strings using "natural ordering" like natsort()
 	// SORT_FLAG_CASE - can be combined (bitwise OR) with SORT_STRING or SORT_NATURAL to sort strings case-insensitively
-	public function sort(int $sort_flags=SORT_REGULAR)
+	public function sort(int $sort_flags=SORT_REGULAR) : Collection
 	{
 		if ($this->isEmpty()) return $this->returnItem([]);
 		sort($this->items, $sort_flags);
@@ -153,10 +190,60 @@ class Collection implements Iterator
 	}
 
 	// Sorting type flags: @see sort()
-	public function reverseSort(int $sort_flags=SORT_REGULAR)
+	public function reverseSort(int $sort_flags=SORT_REGULAR) : Collection
 	{
 		if ($this->isEmpty()) return $this->returnItem([]);
 		rsort($this->items, $sort_flags);
 		return $this->returnItem($this->items);
+	}
+
+	// Flag determining what arguments are sent to callback:
+	// ARRAY_FILTER_USE_KEY - pass key as the only argument to callback instead of the value
+	// ARRAY_FILTER_USE_BOTH - pass both value and key as arguments to callback instead of the value
+	public function filter(callable $callback=NULL, int $flag=0) : Collection
+	{
+		if ($this->isEmpty()) return $this->returnItem([]);
+		$items = (is_null($callback)) ? array_filter($this->items()) : array_filter($this->items(), $callback, $flag);
+		return $this->returnItem($items);
+	}
+
+	public function flip() : Collection
+	{
+		if ($this->isEmpty()) return $this->returnItem([]);
+		return $this->returnItem(array_flip($this->items));
+	}
+
+	public function merge(... $items) : Collection
+	{
+		if ($this->isEmpty()) return $this->returnItem([]);
+		return $this->returnItem(array_merge($this->items, ...$items));
+	}
+
+	/**
+	 * Join array values.
+	 * @param string $glue
+	 * @param string $preText
+	 * @param string $postText
+	 * @return mixed Collection | string
+	 */
+	public function join(string $glue, string $preText=NULL, string $postText=NULL)
+	{
+		if ($this->isEmpty()) return $this->returnItem([]);
+		return $this->returnItem(trim($preText.join($glue, $this->items).$postText));
+	}
+
+	/**
+	 * Concatenate pre-text to the begining and post-text to the end of each array values.
+	 * @param string $preText
+	 * @param string $postText
+	 * @return Collection
+	 */
+	public function concat(string $preText=NULL, string $postText=NULL) : Collection
+	{
+		if ($this->isEmpty()) return $this->returnItem([]);
+		return $this->map(function($value) use ($preText, $postText)
+		{
+			return "{$preText}{$value}{$postText}";
+		});
 	}
 }

@@ -22,7 +22,7 @@
     		"Blaze\\": "src"
     	},
         "files": [
-            "src/Bootstrap/Helper.php"
+            "src/Support/Helpers.php"
         ]
     },
     "autoload-dev": {

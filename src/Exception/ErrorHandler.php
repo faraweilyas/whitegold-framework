@@ -6,7 +6,7 @@ namespace Blaze\Exception;
  * whiteGold - mini PHP Framework
  *
  * @package whiteGold
- * @author Farawe iLyas <faraweilyas@gmail.com>
+ * @author iLyas Farawe <faraweilyas@gmail.com>
  * @link https://faraweilyas.com
  *
  * ErrorHandler class.
@@ -36,18 +36,20 @@ class ErrorHandler extends \Exception
 		return $this->displayError();
 	}
 
-	public function displayError()
+	/**
+	 * To display custom error
+	 * @return string 
+	 */
+	public function displayError() : string
 	{
-		$errorMessage = "";
-		if ($this->debug) {
-			$errorMessage  = "<b>ErrorMessage: </b> [".$this->getMessage()."] <br />";
-			$errorMessage .= "<b>ErrorLine: </b> [".$this->getLine()."] <br />";
-			$errorMessage .= "<b>ErrorFile: </b> [".$this->getFile()."] <br />";
-			$errorMessage .= "<b>ErrorClass: </b> [".__CLASS__ ."] <br />";
-			$errorMessage .= "<b>ErrorCode: </b> [".$this->getCode()."]. <br /><br />";
-		} else {
-			$errorMessage  = "<b>ErrorMessage: </b> [".$this->getMessage()."] <br /><br />";
-		}
+		if (!$this->debug)
+			return "<b>ErrorMessage: </b> [".$this->getMessage()."] <br /><br />";
+		
+		$errorMessage  = "<b>ErrorMessage: </b> [".$this->getMessage()."] <br />";
+		$errorMessage .= "<b>ErrorLine: </b> [".$this->getLine()."] <br />";
+		$errorMessage .= "<b>ErrorFile: </b> [".$this->getFile()."] <br />";
+		$errorMessage .= "<b>ErrorClass: </b> [".__CLASS__ ."] <br />";
+		$errorMessage .= "<b>ErrorCode: </b> [".$this->getCode()."]. <br /><br />";
 		return $errorMessage;
 	}
 }

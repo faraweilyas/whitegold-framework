@@ -9,7 +9,7 @@ use Blaze\Validation\Validator as Validate;
  * whiteGold - mini PHP Framework
  *
  * @package whiteGold
- * @author Farawe iLyas <faraweilyas@gmail.com>
+ * @author iLyas Farawe <faraweilyas@gmail.com>
  * @link https://faraweilyas.com
  *
  * Auth Class

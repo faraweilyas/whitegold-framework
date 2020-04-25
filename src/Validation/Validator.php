@@ -5,14 +5,14 @@ namespace Blaze\Validation;
 use Blaze\Exception\ErrorCode;
 
 /**
-* whiteGold - mini PHP Framework
-*
-* @package whiteGold
-* @author Farawe iLyas <faraweilyas@gmail.com>
-* @link https://faraweilyas.com
-*
-* Validator Class
-*/
+ * whiteGold - mini PHP Framework
+ *
+ * @package whiteGold
+ * @author iLyas Farawe <faraweilyas@gmail.com>
+ * @link https://faraweilyas.com
+ *
+ * Validator Class
+ */
 abstract class Validator
 {
 	public static $error 	= "";

@@ -3,22 +3,22 @@
 namespace Blaze\Http;
 
 /**
-* whiteGold - mini PHP Framework
-*
-* @package whiteGold
-* @author Farawe iLyas <faraweilyas@gmail.com>
-* @link https://faraweilyas.com
-*
-* Secure Class
-*/
+ * whiteGold - mini PHP Framework
+ *
+ * @package whiteGold
+ * @author iLyas Farawe <faraweilyas@gmail.com>
+ * @link https://faraweilyas.com
+ *
+ * Secure Class
+ */
 class Secure
 {
 	/**
-	* Create csrf token in an html input tag.
-	* @param bool $return
-	* @return mixed
-	*/
-	public function csrfTokenTag (bool $return=TRUE)
+	 * Create csrf token in an html input tag.
+	 * @param bool $return
+	 * @return mixed
+	 */
+	public function csrfTokenTag(bool $return=TRUE)
 	{
 		$token = $this->createCsrfToken();
 		$input = "<input type='hidden' name='csrfToken' value='{$token}' />".PHP_EOL;
@@ -26,10 +26,10 @@ class Secure
 	}
 
 	/**
-	* Check the token validity.
-	* @return bool
-	*/
-	public function checkCrfToken () : bool
+	 * Check the token validity.
+	 * @return bool
+	 */
+	public function checkCrfToken() : bool
 	{
 		if (!$this->isCsrfTokenValid() OR !$this->isCsrfTokenRecent())
 		{			
@@ -40,11 +40,11 @@ class Secure
 	}
 
 	/**
-	* Validate request.
-	* @param string $requestType
-	* @return bool
-	*/
-	public function checkRequestType (string $requestType) : bool
+	 * Validate request.
+	 * @param string $requestType
+	 * @return bool
+	 */
+	public function checkRequestType(string $requestType) : bool
 	{
 		if (!$this->requestType($requestType)) return FALSE;
 		if (!in_array(php_sapi_name(), ['cli-server', 'cli'])):
@@ -54,10 +54,10 @@ class Secure
 	}
 
 	/**
-	* Generate a token for use with CSRF protection.
-	* @return string
-	*/
-	private function createCsrfToken () : string
+	 * Generate a token for use with CSRF protection.
+	 * @return string
+	 */
+	private function createCsrfToken() : string
 	{
 		$token 							= md5(uniqid(rand(), TRUE));
 		$_SESSION['csrfToken'] 			= $token;
@@ -66,10 +66,10 @@ class Secure
 	}
 
 	/**
-	* Check if csrf token is valid.
-	* @return bool
-	*/
-	private function isCsrfTokenValid () : bool
+	 * Check if csrf token is valid.
+	 * @return bool
+	 */
+	private function isCsrfTokenValid() : bool
 	{
 		if (isset($_POST['csrfToken']) && isset($_SESSION['csrfToken']))
 			return $_POST['csrfToken'] === $_SESSION['csrfToken'];
@@ -78,10 +78,10 @@ class Secure
 	}
 
 	/**
-	* Check if csrf token is recent
-	* @return bool
-	*/
-	private function isCsrfTokenRecent () : bool
+	 * Check if csrf token is recent
+	 * @return bool
+	 */
+	private function isCsrfTokenRecent() : bool
 	{
 		$maxElapsed = 60 * 60;
 		if (!isset($_SESSION['csrfTokenTime'])) return FALSE;
@@ -89,20 +89,20 @@ class Secure
 	}
 
 	/**
-	* Check request type.
-	* @param string $requestType
-	* @return bool
-	*/
-	private function requestType (string $requestType) : bool
+	 * Check request type.
+	 * @param string $requestType
+	 * @return bool
+	 */
+	private function requestType(string $requestType) : bool
 	{
 		return ($_SERVER['REQUEST_METHOD'] ?? '') === strtoupper($requestType);
 	}
 
 	/**
-	* Check if request host matches server host.
-	* @return bool
-	*/
-	private function requestIsSameDomain () : bool
+	 * Check if request host matches server host.
+	 * @return bool
+	 */
+	private function requestIsSameDomain() : bool
 	{
 		if (!isset($_SERVER['HTTP_REFERER'])) return FALSE;
 		$refererHost = parse_url($_SERVER['HTTP_REFERER'], PHP_URL_HOST);
@@ -110,9 +110,9 @@ class Secure
 	}
 
 	/**
-	* Destroy csrf token.
-	*/
-	private function destroyCsrfToken ()
+	 * Destroy csrf token.
+	 */
+	private function destroyCsrfToken()
 	{
 		if (isset($_SESSION['csrfToken'])) 		$_SESSION['csrfToken'] 		= NULL;
 		if (isset($_SESSION['csrfTokenTime'])) 	$_SESSION['csrfTokenTime'] 	= NULL;

@@ -3,14 +3,14 @@
 namespace Blaze\File;
 
 /**
-* whiteGold - mini PHP Framework
-*
-* @package whiteGold
-* @author Farawe iLyas <faraweilyas@gmail.com>
-* @link https://faraweilyas.com
-*
-* FileVideo Class
-*/
+ * whiteGold - mini PHP Framework
+ *
+ * @package whiteGold
+ * @author iLyas Farawe <faraweilyas@gmail.com>
+ * @link https://faraweilyas.com
+ *
+ * FileVideo Class
+ */
 class FileVideo extends File
 {
 	// 16 MB
@@ -28,19 +28,19 @@ class FileVideo extends File
 	];
 
 	/**
-	* File Type Initialization.
-	*/ 
-	protected function initialize ()
+	 * File Type Initialization.
+	 */ 
+	protected function initialize()
 	{
 		$this->setFileType(static::FILE_TYPE_VIDEO);
 		$this->setUploadFileDir("videos");
 	}
 
 	/**
-	* Validates file by it's type.
-	* @return bool
-	*/
-	protected function validateType () : bool
+	 * Validates file by it's type.
+	 * @return bool
+	 */
+	protected function validateType() : bool
 	{
 		// Checks if video type is allowed
 		if ($this->validateMimeType() == FALSE) return FALSE;

@@ -3,14 +3,14 @@
 namespace Blaze\Http;
 
 /**
-* whiteGold - mini PHP Framework
-*
-* @package whiteGold
-* @author Farawe iLyas <faraweilyas@gmail.com>
-* @link https://faraweilyas.com
-*
-* MailReader Class
-*/
+ * whiteGold - mini PHP Framework
+ *
+ * @package whiteGold
+ * @author iLyas Farawe <faraweilyas@gmail.com>
+ * @link https://faraweilyas.com
+ *
+ * MailReader Class
+ */
 class MailReader
 {
     // imap server connection

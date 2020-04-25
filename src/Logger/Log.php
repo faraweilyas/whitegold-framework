@@ -5,14 +5,14 @@ namespace Blaze\Logger;
 use Blaze\Validation\Validator as Validate;
 
 /**
-* whiteGold - mini PHP Framework
-*
-* @package whiteGold
-* @author Farawe iLyas <faraweilyas@gmail.com>
-* @link https://faraweilyas.com
-*
-* Log Class
-*/
+ * whiteGold - mini PHP Framework
+ *
+ * @package whiteGold
+ * @author iLyas Farawe <faraweilyas@gmail.com>
+ * @link https://faraweilyas.com
+ *
+ * Log Class
+ */
 class Log
 {
 	protected $message;
@@ -29,12 +29,12 @@ class Log
 	public $error;
 
 	/**
-	* Sets the message and level to log in class properties
-	* @param string $message
-	* @param string $level
-	* @return void
-	*/
-	function __construct (string $message=NULL, string $level=NULL)
+	 * Sets the message and level to log in class properties
+	 * @param string $message
+	 * @param string $level
+	 * @return void
+	 */
+	function __construct(string $message=NULL, string $level=NULL)
 	{
 		$this->message 	= $message;
 		$this->level 	= strtoupper($level);
@@ -42,42 +42,42 @@ class Log
 	}
 
 	/**
-	* Sets log directory
-	* @param string $logDir
-	* @return object
-	*/
-	public function setLogDir (string $logDir=NULL)
+	 * Sets log directory
+	 * @param string $logDir
+	 * @return object
+	 */
+	public function setLogDir(string $logDir=NULL)
 	{
 		$this->logDir = $logDir;
 		return $this;
 	}
 
 	/**
-	* Returns the log file.
-	* @param string $logFile
-	* @return object
-	*/
-	public function setLogFile (string $logFile=NULL)
+	 * Returns the log file.
+	 * @param string $logFile
+	 * @return object
+	 */
+	public function setLogFile(string $logFile=NULL)
 	{
 		$this->logFile = $logFile;
 		return $this;
 	}
 
 	/**
-	* Returns the log file.
-	* @return string
-	*/
-	public function getLogFile () : string
+	 * Returns the log file.
+	 * @return string
+	 */
+	public function getLogFile() : string
 	{
 		return $this->logFile;
 	}
 
 	/**
-	* Validates the specified attribute
-	* @param string $attribute
-	* @return bool
-	*/
-	protected function validateAttribute (string $attribute=NULL) : bool
+	 * Validates the specified attribute
+	 * @param string $attribute
+	 * @return bool
+	 */
+	protected function validateAttribute(string $attribute=NULL) : bool
 	{
 		if (!property_exists($this, $attribute))
 		{
@@ -91,21 +91,21 @@ class Log
 	}
 
 	/**
-	* Processes log file.
-	* @return object
-	*/
-	protected function processLogFile ()
+	 * Processes log file.
+	 * @return object
+	 */
+	protected function processLogFile()
 	{
 		$this->logFile = (empty($this->logFile)) ? $this->logDir.strtolower($this->level)."Log.txt" : $this->logDir.$this->logFile;
 		return $this;
 	}
 
     /**
-    * Log message in the specified log file
-	* @param string $delimeter
-	* @return object
-    */
-    public function logMessage (string $delimeter="|")
+     * Log message in the specified log file
+	 * @param string $delimeter
+	 * @return object
+	 */
+    public function logMessage(string $delimeter="|")
     {
     	// Validates Message
         if ($this->validateAttribute("message") == FALSE) return $this;
@@ -127,12 +127,12 @@ class Log
     }
 
     /**
-    * Log message in the specified log file
-	* @param string $delimeter
-	* @param array $objects
-	* @return object
-    */
-    public function fileLog (string $delimeter="|", ...$keys)
+     * Log message in the specified log file
+	 * @param string $delimeter
+	 * @param array $objects
+	 * @return object
+     */
+    public function fileLog(string $delimeter="|", ...$keys)
     {
         $this->delimeter 	= $delimeter;
         $this->keys 		= $keys;
@@ -159,14 +159,14 @@ class Log
     }
 
     /**
-    * Read log file and return this
-	* @param string $logFile
-	* @param array $keys
-	* @param string $order
-	* @param string $delimeter
-	* @return this
-    */
-    public function readFile (string $logFile=NULL, array $keys=[], string $order="desc", string $delimeter="|")
+     * Read log file and return this
+	 * @param string $logFile
+	 * @param array $keys
+	 * @param string $order
+	 * @param string $delimeter
+	 * @return this
+     */
+    public function readFile(string $logFile=NULL, array $keys=[], string $order="desc", string $delimeter="|")
     {
 		$this->readResult 	= [];
 		$this->logFile 		= $logFile;
@@ -215,22 +215,22 @@ class Log
     }
 
     /**
-    * Reset the filtered result
-	* @return this
-    */
-    public function refresh ()
+     * Reset the filtered result
+	 * @return this
+     */
+    public function refresh()
     {
 		$this->filteredResult = $this->readResult;
 		return $this;
     }
 
     /**
-    * Find where a column is equal to a value
-	* @param string $column
-	* @param mixed $values
-	* @return this
-    */
-    public function findWhere (string $column=NULL, ...$values)
+     * Find where a column is equal to a value
+	 * @param string $column
+	 * @param mixed $values
+	 * @return this
+     */
+    public function findWhere(string $column=NULL, ...$values)
     {
     	if (empty($this->filteredResult)) return $this;
 		$newReadResult 			= filterObject($this->filteredResult, $column, ...$values);
@@ -239,7 +239,11 @@ class Log
 		return $this;
     }
 
-    function test ()
+    /**
+     * Run a smaple of the log class
+	 * @return void
+     */
+    public function sample()
     {
 	    $fileLog = new Log;
 	    $fileLog->setLogFile("actionLog.txt")->fileLog("|", "#241561DHSW", "Follow", "Hello");

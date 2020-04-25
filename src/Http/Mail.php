@@ -6,14 +6,14 @@ use PHPMailer\PHPMailer\PHPMailer;
 use PHPMailer\PHPMailer\Exception;
 
 /**
-* whiteGold - mini PHP Framework
-*
-* @package whiteGold
-* @author Farawe iLyas <faraweilyas@gmail.com>
-* @link https://faraweilyas.com
-*
-* Mail Class
-*/
+ * whiteGold - mini PHP Framework
+ *
+ * @package whiteGold
+ * @author iLyas Farawe <faraweilyas@gmail.com>
+ * @link https://faraweilyas.com
+ *
+ * Mail Class
+ */
 class Mail
 {
 	// Stores mail error message
@@ -23,15 +23,15 @@ class Mail
 	public static $result;
 
 	/**
-	* Sends Plain Email
-	* @param \stdClass $emailBody
-	* @param \stdClass $to
-	* @param \stdClass $from
-	* @param \stdClass $replyTo
-	* @param \stdClass $SMTPConfig
-	* @return bool
-	*/
-	public static function sendEmail (\stdClass $emailBody, \stdClass $to, \stdClass $from, \stdClass $replyTo, $SMTPConfig='') : bool
+	 * Sends Plain Email
+	 * @param \stdClass $emailBody
+	 * @param \stdClass $to
+	 * @param \stdClass $from
+	 * @param \stdClass $replyTo
+	 * @param \stdClass $SMTPConfig
+	 * @return bool
+	 */
+	public static function sendEmail(\stdClass $emailBody, \stdClass $to, \stdClass $from, \stdClass $replyTo, $SMTPConfig='') : bool
 	{
 		$mail = new PHPMailer;
 		static::setSMTPConfig($mail, $SMTPConfig);
@@ -46,15 +46,15 @@ class Mail
 	}
 
 	/**
-	* Sends Html Email
-	* @param \stdClass $emailBody
-	* @param \stdClass $to
-	* @param \stdClass $from
-	* @param \stdClass $replyTo
-	* @param \stdClass $SMTPConfig
-	* @return bool
+	 * Sends Html Email
+	 * @param \stdClass $emailBody
+	 * @param \stdClass $to
+	 * @param \stdClass $from
+	 * @param \stdClass $replyTo
+	 * @param \stdClass $SMTPConfig
+	 * @return bool
 	*/
-	public static function sendHtmlEmail (\stdClass $emailBody, \stdClass $to, \stdClass $from, \stdClass $replyTo, $SMTPConfig='') : bool
+	public static function sendHtmlEmail(\stdClass $emailBody, \stdClass $to, \stdClass $from, \stdClass $replyTo, $SMTPConfig='') : bool
 	{
 		$mail = new PHPMailer;
 		static::setSMTPConfig($mail, $SMTPConfig);
@@ -69,16 +69,16 @@ class Mail
 	}
 
 	/**
-	* Sends Html Email with Attachment
-	* @param \stdClass $emailBody
-	* @param \stdClass $to
-	* @param \stdClass $from
-	* @param \stdClass $replyTo
-	* @param \stdClass $attachment
-	* @param \stdClass $SMTPConfig
-	* @return bool
-	*/
-	public static function sendWithAttachment (\stdClass $emailBody, \stdClass $to, \stdClass $from, \stdClass $replyTo, \stdClass $attachment, $SMTPConfig='') : bool
+	 * Sends Html Email with Attachment
+	 * @param \stdClass $emailBody
+	 * @param \stdClass $to
+	 * @param \stdClass $from
+	 * @param \stdClass $replyTo
+	 * @param \stdClass $attachment
+	 * @param \stdClass $SMTPConfig
+	 * @return bool
+	 */
+	public static function sendWithAttachment(\stdClass $emailBody, \stdClass $to, \stdClass $from, \stdClass $replyTo, \stdClass $attachment, $SMTPConfig='') : bool
 	{
 		$mail = new PHPMailer;
 		static::setSMTPConfig($mail, $SMTPConfig);
@@ -94,23 +94,23 @@ class Mail
 	}
 	
 	/**
-	* Set STMP Server Config
-	* @param PHPMailer $mail
-	* @param \stdClass $SMTPConfig
-	* @return void
-	*/
-	public static function setSMTPConfig (PHPMailer $mail, $SMTPConfig='')
+	 * Set STMP Server Config
+	 * @param PHPMailer $mail
+	 * @param \stdClass $SMTPConfig
+	 * @return void
+	 */
+	public static function setSMTPConfig(PHPMailer $mail, $SMTPConfig='')
 	{
 		if (is_object($SMTPConfig)) static::configure($mail, $SMTPConfig);
 	}
 
 	/**
-	* Configures STMP Server
-	* @param PHPMailer $mail
-	* @param \stdClass $configurations
-	* @return void
-	*/
-	public static function configure (PHPMailer $mail, \stdClass $configurations)
+	 * Configures STMP Server
+	 * @param PHPMailer $mail
+	 * @param \stdClass $configurations
+	 * @return void
+	 */
+	public static function configure(PHPMailer $mail, \stdClass $configurations)
 	{
 		$mail->isSMTP();
 		$mail->SMTPAuth 	= true;
@@ -122,15 +122,15 @@ class Mail
 	}
 	
 	/**
-	* Set SMTP configuration for email sending.
-	* @param string $host
-	* @param string $username
-	* @param string $password
-	* @param string $SMTPSecure
-	* @param int $port
-	* @return \stdClass
-	*/
-	final public static function setSMTP (string $host, string $username, string $password, string $SMTPSecure, int $port) : \stdClass
+	 * Set SMTP configuration for email sending.
+	 * @param string $host
+	 * @param string $username
+	 * @param string $password
+	 * @param string $SMTPSecure
+	 * @param int $port
+	 * @return \stdClass
+	 */
+	final public static function setSMTP(string $host, string $username, string $password, string $SMTPSecure, int $port) : \stdClass
 	{
 		return (object) $SMTPConfig = [
 			'host' 			=> $host,
@@ -142,42 +142,42 @@ class Mail
 	}
 	
 	/**
-	* Sets email parameters and cast it into an object.
-	* @param string $email
-	* @param string $emailName
-	* @return \stdClass
-	*/
-	final public static function setEmail (string $email, string $emailName="") : \stdClass
+	 * Sets email parameters and cast it into an object.
+	 * @param string $email
+	 * @param string $emailName
+	 * @return \stdClass
+	 */
+	final public static function setEmail(string $email, string $emailName="") : \stdClass
 	{
 		return (object) ['email' => $email, 'name' => $emailName];
 	}
 
 	/**
-	* Sets email body parameters and cast it into an object.
-	* @param string $subject
-	* @param string $messageBody
-	* @return \stdClass
-	*/
-	final public static function setBody (string $subject, string $messageBody) : \stdClass
+	 * Sets email body parameters and cast it into an object.
+	 * @param string $subject
+	 * @param string $messageBody
+	 * @return \stdClass
+	 */
+	final public static function setBody(string $subject, string $messageBody) : \stdClass
 	{
 		return (object) ['subject' => $subject, 'messageBody' => $messageBody];
 	}
 
 	/**
-	* Sets attachment parameters and cast it into an object.
-	* @param string $file
-	* @param string $fileName
-	* @return \stdClass
-	*/
-	final public static function setAttachment (string $fileName, string $newFileName="") : \stdClass
+	 * Sets attachment parameters and cast it into an object.
+	 * @param string $file
+	 * @param string $fileName
+	 * @return \stdClass
+	 */
+	final public static function setAttachment(string $fileName, string $newFileName="") : \stdClass
 	{
 		return (object) ['fileName' => $fileName, 'newFileName' => $newFileName];
 	}
 
 	/**
-	* A test to show an example of how it works.
-	*/
-	public static function testExample ()
+	 * A test to show an example of how it works.
+	 */
+	public static function testExample()
 	{
         $SMTPConfig	= Mail::setSMTP(
         	getConstant("MAIL_HOST", TRUE),

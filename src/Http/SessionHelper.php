@@ -3,20 +3,20 @@
 namespace Blaze\Http;
 
 /**
-* whiteGold - mini PHP Framework
-*
-* @package whiteGold
-* @author Farawe iLyas <faraweilyas@gmail.com>
-* @link https://faraweilyas.com
-*
-* SessionHelper Class
-* Useful php.ini file settings:
-* session.cookie_lifetime = 0
-* session.cookie_secure = 1
-* session.cookie_httponly = 1
-* session.use_only_cookies = 1
-* session.entropy_file = "/dev/urandom"
-*/
+ * whiteGold - mini PHP Framework
+ *
+ * @package whiteGold
+ * @author iLyas Farawe <faraweilyas@gmail.com>
+ * @link https://faraweilyas.com
+ *
+ * SessionHelper Class
+ * Useful php.ini file settings:
+ * session.cookie_lifetime = 0
+ * session.cookie_secure = 1
+ * session.cookie_httponly = 1
+ * session.use_only_cookies = 1
+ * session.entropy_file = "/dev/urandom"
+ */
 abstract class SessionHelper
 {
     protected $expire;

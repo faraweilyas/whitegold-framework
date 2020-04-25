@@ -3,14 +3,14 @@
 namespace Blaze\File;
 
 /**
-* whiteGold - mini PHP Framework
-*
-* @package whiteGold
-* @author Farawe iLyas <faraweilyas@gmail.com>
-* @link https://faraweilyas.com
-*
-* FileAttach Class
-*/
+ * whiteGold - mini PHP Framework
+ *
+ * @package whiteGold
+ * @author iLyas Farawe <faraweilyas@gmail.com>
+ * @link https://faraweilyas.com
+ *
+ * FileAttach Class
+ */
 class FileAttach extends File
 {
 	// 16 MB
@@ -20,8 +20,8 @@ class FileAttach extends File
 	protected $allowedMimeTypes = [];
 
 	/**
-	* File Type Initialization.
-	*/ 
+	 * File Type Initialization.
+	 */ 
 	protected function initialize ()
 	{
 		$this->setFileType(static::FILE_TYPE_FILE);
@@ -29,9 +29,9 @@ class FileAttach extends File
 	}
 
 	/**
-	* Validates file by it's type.
-	* @return bool
-	*/
+	 * Validates file by it's type.
+	 * @return bool
+	 */
 	protected function validateType () : bool
 	{
 		// Checks if audio type is allowed

@@ -3,14 +3,14 @@
 namespace Blaze\File;
 
 /**
-* whiteGold - mini PHP Framework
-*
-* @package whiteGold
-* @author Farawe iLyas <faraweilyas@gmail.com>
-* @link https://faraweilyas.com
-*
-* FileImage Class
-*/
+ * whiteGold - mini PHP Framework
+ *
+ * @package whiteGold
+ * @author iLyas Farawe <faraweilyas@gmail.com>
+ * @link https://faraweilyas.com
+ *
+ * FileImage Class
+ */
 class FileImage extends File
 {
 	public $imageResize;
@@ -33,15 +33,15 @@ class FileImage extends File
 	];
 
     /**
-    * Configures file properties for evaluation upon initialization.
-    * Overrides parents constructor
-    * @param array $file
-    * @param string $newFileName
-    * @param bool $resize
-    * @param int $imageSize
-    * @param int $jpegQuality
-    */
-	function __construct (array $file, string $newFileName=NULL, bool $resize=FALSE, int $imageSize=500, int $jpegQuality=100)
+     * Configures file properties for evaluation upon initialization.
+     * Overrides parents constructor
+     * @param array $file
+     * @param string $newFileName
+     * @param bool $resize
+     * @param int $imageSize
+     * @param int $jpegQuality
+     */
+	function __construct(array $file, string $newFileName=NULL, bool $resize=FALSE, int $imageSize=500, int $jpegQuality=100)
 	{
 		parent::__construct($file, $newFileName);
 		$this->imageResize 			= $resize; 
@@ -50,19 +50,19 @@ class FileImage extends File
 	}
 
 	/**
-	* File Type Initialization.
-	*/ 
-	protected function initialize ()
+	 * File Type Initialization.
+	 */ 
+	protected function initialize()
 	{
 		$this->setFileType(static::FILE_TYPE_IMAGE);
 		$this->setUploadFileDir("images");
 	}
 
 	/**
-	* Validates file by it's type.
-	* @return bool
-	*/
-	protected function validateType () : bool
+	 * Validates file by it's type.
+	 * @return bool
+	 */
+	protected function validateType() : bool
 	{
 		$file = $this->file;
 		if (!getimagesize($file['tmp_name'])):
@@ -87,10 +87,10 @@ class FileImage extends File
 	}
 
 	/**
-	* Resizes the image file if resize is TRUE.
-	* @return bool
-	*/
-	protected function resizeImage () : bool
+	 * Resizes the image file if resize is TRUE.
+	 * @return bool
+	 */
+	protected function resizeImage() : bool
 	{
 		if ($this->imageResize) {
 			$result 	= $this->createImageResource();
@@ -104,10 +104,10 @@ class FileImage extends File
 	}
 
 	/**
-	* Creates image resource for image resizing
-	* @return bool
-	*/
-	final protected function createImageResource () : bool
+	 * Creates image resource for image resizing
+	 * @return bool
+	 */
+	final protected function createImageResource() : bool
 	{
 		// SWITCH STATEMENT BELOW CREATES NEW IMAGE FROM GIVEN FILE
 		switch ($this->mimeType)
@@ -131,10 +131,10 @@ class FileImage extends File
 	}
 
 	/**
-	* Construct a proportional size of new image and then creates a canvas.
-	* @return bool
-	*/
-	final protected function proportionalResize () : bool
+	 * Construct a proportional size of new image and then creates a canvas.
+	 * @return bool
+	 */
+	final protected function proportionalResize() : bool
 	{
 		// Return FALSE if nothing to resize
 		if ($this->imageWidth <= 0 || $this->imageHeight <= 0):
@@ -158,11 +158,11 @@ class FileImage extends File
 	}
 
 	/**
-	* Saves image resource to file
-	* @param mixed $newCanvas
-	* @return bool
-	*/
-	final protected function saveImageCanvas ($newCanvas) : bool
+	 * Saves image resource to file
+	 * @param mixed $newCanvas
+	 * @return bool
+	 */
+	final protected function saveImageCanvas($newCanvas) : bool
 	{
 		deleteFile($this->newFileLocation);
 		// Switch statement below checks image mime type to create the new image

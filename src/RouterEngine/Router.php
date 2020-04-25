@@ -7,31 +7,31 @@ use Blaze\RouterEngine\RouterParts;
 use Blaze\Validation\Validator as Validate;
 
 /**
-* whiteGold - mini PHP Framework
-*
-* @package whiteGold
-* @author Farawe iLyas <faraweilyas@gmail.com>
-* @link https://faraweilyas.com
-*
-* Router Class
-*/
+ * whiteGold - mini PHP Framework
+ *
+ * @package whiteGold
+ * @author iLyas Farawe <faraweilyas@gmail.com>
+ * @link https://faraweilyas.com
+ *
+ * Router Class
+ */
 class Router extends RouterParts
 {
 	/**
-	* URI route parameter.
-	* @var string
-	*/
+	 * URI route parameter.
+	 * @var string
+	 */
 	public static $route = "";
 
 	/**
-	* Registered named routes.
-	* @var array
-	*/
+	 * Registered named routes.
+	 * @var array
+	 */
 	public static $namedRoutes = [];
 
 	/**
-	* Router initializer
-	*/
+	 * Router initializer
+	 */
 	final public static function initialize ()
 	{
 		static::getUrl();
@@ -40,9 +40,9 @@ class Router extends RouterParts
 	}
 
 	/**
-	* Returns current requested route.
-	* @return string
-	*/
+	 * Returns current requested route.
+	 * @return string
+	 */
 	final public static function getRequestedRoute () : string
 	{
 		$requestedRoute = '';
@@ -62,8 +62,8 @@ class Router extends RouterParts
 	}
 
 	/**
-	* It gets the get url parameter passed from the RewriteEngine in HTACCESS file.
-	*/
+	 * It gets the get url parameter passed from the RewriteEngine in HTACCESS file.
+	 */
 	final protected static function getUrl ()
 	{
 		$requestUri 	= static::getRequestedRoute();
@@ -76,11 +76,11 @@ class Router extends RouterParts
 	}
 
 	/**
-	* It registers the route and method to the class properties for evaluation.
-	* @param string $route
-	* @param mixed $method
-	* @param string $routName
-	*/
+	 * It registers the route and method to the class properties for evaluation.
+	 * @param string $route
+	 * @param mixed $method
+	 * @param string $routName
+	 */
 	final public static function register (string $route, $method, string $routName=NULL)
 	{
 		$route 							= '/'.trim($route, '/');
@@ -91,8 +91,8 @@ class Router extends RouterParts
 	}
 
 	/**
-	* Checks the app state before routing.
-	*/
+	 * Checks the app state before routing.
+	 */
 	final protected static function checkAppState ()
 	{
 		if (!getConstant('UNDER_CONSTRUCTION')) return;
@@ -109,8 +109,8 @@ class Router extends RouterParts
 	}
 	
 	/**
-	* Checks for routes that matches the requested route.
-	*/
+	 * Checks for routes that matches the requested route.
+	 */
 	final protected static function validateRequestedRoute ()
 	{
 		if (static::routeMatch()):
@@ -134,60 +134,60 @@ class Router extends RouterParts
 	}
 
 	/**
-	* It calls the route helper for proper file inclusion for HTML.
-	* @param string $file
-	* @param bool $return
-	* @return string
-	*/
+	 * It calls the route helper for proper file inclusion for HTML.
+	 * @param string $file
+	 * @param bool $return
+	 * @return string
+	 */
 	final public static function _file (string $file, bool $return=TRUE) : string
 	{
 		return static::routeDriver($file, $return);
 	}
 
 	/**
-	* It calls the route helper for proper url linking for HTML.
-	* @param string $url
-	* @param bool $return
-	* @return string
-	*/
+	 * It calls the route helper for proper url linking for HTML.
+	 * @param string $url
+	 * @param bool $return
+	 * @return string
+	 */
 	final public static function _url (string $url, bool $return=TRUE) : string
 	{
 		return static::routeDriver($url, $return);
 	}
 
 	/**
-	* It calls the route helper for proper redirection.
-	* @param string $route
-	* @param bool $return
-	* @return string
-	*/
+	 * It calls the route helper for proper redirection.
+	 * @param string $route
+	 * @param bool $return
+	 * @return string
+	 */
 	final public static function redirectRoute (string $route, bool $return=TRUE) : string
 	{
 		return static::routeDriver($route, $return);
 	}
 
 	/**
-	* Returns current route.
-	* @return string
-	*/
+	 * Returns current route.
+	 * @return string
+	 */
 	final public static function getRoute () : string
 	{
 		return static::$route;
 	}
 
 	/**
-	* Returns registered routes.
-	* @return array
-	*/
+	 * Returns registered routes.
+	 * @return array
+	 */
 	final public static function getRoutes () : array
 	{
 		return static::$_uri;
 	}
 
 	/**
-	* Returns registered named routes.
-	* @return array
-	*/
+	 * Returns registered named routes.
+	 * @return array
+	 */
 	final public static function getNamedRoutes () : array
 	{
 		return static::$namedRoutes;

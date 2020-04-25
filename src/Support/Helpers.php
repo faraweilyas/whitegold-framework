@@ -5,14 +5,14 @@ use Blaze\RouterEngine\Router as Route;
 use Blaze\Validation\Validator as Validate;
 
 /**
-* whiteGold - mini PHP Framework
-*
-* @package whiteGold
-* @author Farawe iLyas <faraweilyas@gmail.com>
-* @link https://faraweilyas.com
-*
-* Helper Functions
-*/
+ * whiteGold - mini PHP Framework
+ *
+ * @package whiteGold
+ * @author iLyas Farawe <faraweilyas@gmail.com>
+ * @link https://faraweilyas.com
+ *
+ * Helper Functions
+ */
 
 if (!function_exists('redirectTo')):
 	/**

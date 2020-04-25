@@ -6,14 +6,14 @@ use Blaze\Exception\ErrorCode;
 use Blaze\Validation\Validator;
 
 /**
-* whiteGold - mini PHP Framework
-*
-* @package whiteGold
-* @author Farawe iLyas <faraweilyas@gmail.com>
-* @link https://faraweilyas.com
-*
-* FormValidator Class
-*/
+ * whiteGold - mini PHP Framework
+ *
+ * @package whiteGold
+ * @author iLyas Farawe <faraweilyas@gmail.com>
+ * @link https://faraweilyas.com
+ *
+ * FormValidator Class
+ */
 class FormValidator extends Validator
 {
 	/**

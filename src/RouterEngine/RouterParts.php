@@ -8,14 +8,14 @@ use Blaze\Validation\Validator as Validate;
 use Blaze\RouterEngine\RouterDaemonInterface;
 
 /**
-* whiteGold - mini PHP Framework
-*
-* @package whiteGold
-* @author Farawe iLyas <faraweilyas@gmail.com>
-* @link https://faraweilyas.com
-*
-* RouterParts Class
-*/
+ * whiteGold - mini PHP Framework
+ *
+ * @package whiteGold
+ * @author iLyas Farawe <faraweilyas@gmail.com>
+ * @link https://faraweilyas.com
+ *
+ * RouterParts Class
+ */
 abstract class RouterParts implements RouterDaemonInterface
 {
 	/**

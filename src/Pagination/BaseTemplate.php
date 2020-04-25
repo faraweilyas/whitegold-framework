@@ -6,7 +6,7 @@ namespace Blaze\Pagination;
  * whiteGold - mini PHP Framework
  *
  * @package whiteGold
- * @author Farawe iLyas <faraweilyas@gmail.com>
+ * @author iLyas Farawe <faraweilyas@gmail.com>
  * @link https://faraweilyas.com
  *
  * BaseTemplate Class

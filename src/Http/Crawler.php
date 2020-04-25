@@ -3,79 +3,79 @@
 namespace Blaze\Http;
 
 /**
-* whiteGold - mini PHP Framework
-*
-* @package whiteGold
-* @author Farawe iLyas <faraweilyas@gmail.com>
-* @link https://faraweilyas.com
-*
-* Crawler Class
-*/
+ * whiteGold - mini PHP Framework
+ *
+ * @package whiteGold
+ * @author iLyas Farawe <faraweilyas@gmail.com>
+ * @link https://faraweilyas.com
+ *
+ * Crawler Class
+ */
 abstract class Crawler
 {
 	/**
-	* Stores links to crawl
-	* @var array
-	*/
+	 * Stores links to crawl
+	 * @var array
+	 */
 	protected $urls 		= [];
 
 	/**
-	* Stores fields that are to be parsed with the url
-	* @var array
-	*/
+	 * Stores fields that are to be parsed with the url
+	 * @var array
+	 */
 	protected $fields 		= [];
 
 	/**
-	* Stores errors.
-	* @var string
-	*/
+	 * Stores errors.
+	 * @var string
+	 */
 	protected $error 		= '';
 
 	/**
-	* Stores the curl handle resource
-	* @var resource
-	*/
+	 * Stores the curl handle resource
+	 * @var resource
+	 */
 	protected $curlHandle;		
 
 	/**
-	* Constructor to initialize connection.
-	*/
+	 * Constructor to initialize connection.
+	 */
 	public function __construct()
 	{
 		$this->openConnection();
 	}
 
 	/**
-	* Create a new curl connection.
-	*/
-	protected function openConnection ()
+	 * Create a new curl connection.
+	 */
+	protected function openConnection()
 	{
 		$this->curlHandle = curl_init();
 	}
 
     /**
-    * Gets the error.
-    * @return string
-    */
-    public function getError () : string
+     * Gets the error.
+     * @return string
+     */
+    public function getError() : string
     {
         return $this->error;
     }
 
 	/**
-	* Sets links to be visited
-	* @param array $urls
-	*/
-	protected function setUrls (array $urls)
+	 * Sets links to be visited
+	 * @param array $urls
+	 */
+	protected function setUrls(array $urls)
 	{
 		foreach ($urls as $key => $value) $this->urls[$key] = $value;
 	}
 
 	/**
-	* Validates the connection.
-	* @return bool
-	*/
-	protected function validateConnection () : bool
+	 * Validates the connection.
+	 * @return bool
+	 */
+	protected function validateConnection() : bool
 	{
 		if (curl_exec($this->curlHandle)) return TRUE;
 		$this->error = "An error has occurred: ".curl_error($this->curlHandle);
@@ -83,11 +83,11 @@ abstract class Crawler
 	}
 
 	/**
-	* Validates the result from a session
-	* @param mixed $result
-	* @return bool
-	*/
-	protected function validateResult ($result) : bool
+	 * Validates the result from a session
+	 * @param mixed $result
+	 * @return bool
+	 */
+	protected function validateResult($result) : bool
 	{
 		if (!is_string($result)) return TRUE;
 		if (stripos($result, "An error") !== 0) return TRUE;
@@ -96,20 +96,20 @@ abstract class Crawler
 	}
 
 	/**
-	* Sets post data to be sent
-	* Expects an associative array
-	* @param array $fields
-	*/
-	protected function setPostFields (array $fields)
+	 * Sets post data to be sent
+	 * Expects an associative array
+	 * @param array $fields
+	 */
+	protected function setPostFields(array $fields)
 	{
 		foreach ($fields as $key => $value) $this->fields[$key] = $value;
 	}
 
 	/**
-	* Generate the post fields to be sent
-	* @return string
-	*/
-	protected function generatePostFields () : string
+	 * Generate the post fields to be sent
+	 * @return string
+	 */
+	protected function generatePostFields() : string
 	{
 		$fieldsString = '';
 		foreach($this->fields as $key => $value) $fieldsString .= $key.'='.$value.'&';
@@ -117,10 +117,10 @@ abstract class Crawler
 	}
 
 	/**
-	* Set default curl configurations
-	* @param string $cookieLocation
-	*/
-	protected function setDefaultOptions (string $cookieLocation='')
+	 * Set default curl configurations
+	 * @param string $cookieLocation
+	 */
+	protected function setDefaultOptions(string $cookieLocation='')
 	{
 		$cookie = $cookieLocation."cookie.txt";
 		// MAKE IT RETURN RESULT INSTEAD OF DISPLAYING
@@ -136,18 +136,18 @@ abstract class Crawler
 	}
 
 	/**
-	* Close curl connection
-	*/
-	protected function closeConnection ()
+	 * Close curl connection
+	 */
+	protected function closeConnection()
 	{
 		curl_close($this->curlHandle);
 	}
 
 	/**
-	* Returns information on current curl connection.
-	* @return array
-	*/
-	public function curlInfo () : array
+	 * Returns information on current curl connection.
+	 * @return array
+	 */
+	public function curlInfo() : array
 	{
         return curl_getinfo($this->curlHandle);
 	}

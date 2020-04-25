@@ -5,14 +5,14 @@ namespace Blaze\Database;
 use Blaze\Validation\Validator as Validate;
 
 /**
-* whiteGold - mini PHP Framework
-*
-* @package whiteGold
-* @author Farawe iLyas <faraweilyas@gmail.com>
-* @link https://faraweilyas.com
-*
-* DatabaseObject Class
-*/
+ * whiteGold - mini PHP Framework
+ *
+ * @package whiteGold
+ * @author iLyas Farawe <faraweilyas@gmail.com>
+ * @link https://faraweilyas.com
+ *
+ * DatabaseObject Class
+ */
 class DatabaseObject extends DatabaseParts
 {
 	/**

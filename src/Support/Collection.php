@@ -27,6 +27,11 @@ class Collection implements Iterator
 		$this->items = $items;
 	}
 
+	public function __invoke()
+	{
+		return $this->items();
+	}
+
 	public function rewind()
 	{
 		return reset($this->items);
@@ -64,7 +69,7 @@ class Collection implements Iterator
 
 	public function returnItem($item)
 	{
-		return is_array($item) ? new self($item) : $item;
+		return is_array($item) ? new static($item) : $item;
 	}
 
 	public function refresh()
@@ -72,6 +77,11 @@ class Collection implements Iterator
 		if ($this->isEmpty()) return $this->returnItem([]);
 		$this->rewind();
 		return $this->returnItem($this->items);
+	}
+
+	public function items() : array
+	{
+		return ($this->isEmpty()) ? [] : $this->items;
 	}
 
 	public function first()
@@ -89,11 +99,6 @@ class Collection implements Iterator
 	public function count() : int
 	{
 		return count($this->items);
-	}
-
-	public function items() : array
-	{
-		return ($this->isEmpty()) ? [] : $this->items;
 	}
 
 	public function keys() : Collection

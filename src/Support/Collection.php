@@ -3,6 +3,7 @@
 namespace Blaze\Support;
 
 use Iterator;
+use Cocur\Slugify\Slugify;
 
 /**
  * whiteGold - mini PHP Framework
@@ -19,10 +20,10 @@ class Collection implements Iterator
 
 	public function __construct($items)
 	{
-		$this->setItems($items);
+		$this->collect($items);
 	}
 
-	public function setItems($items)
+	public function collect($items)
 	{
 		$this->items = $items;
 	}
@@ -119,6 +120,15 @@ class Collection implements Iterator
 		return $this->returnItem(array_sum($this->items));
 	}
 
+	public function walk(callable $callback=NULL, $data=NULL) : Collection
+	{
+		if ($this->isEmpty()) return $this->returnItem([]);
+		$items = $this->items();
+		array_walk($items, $callback, $data);
+		$this->collect($items);
+		return $this->returnItem($this->items);
+	}
+
 	public function map(callable $callback=NULL, ... $items) : Collection
 	{
 		if ($this->isEmpty()) return $this->returnItem([]);
@@ -158,14 +168,14 @@ class Collection implements Iterator
 	public function ucwords() : Collection
 	{
 		if ($this->isEmpty()) return $this->returnItem([]);
-		$this->setItems($this->lowercase()->items());
+		$this->collect($this->lowercase()->items());
 		return $this->map('ucwords');
 	}
 
 	public function ucfirst() : Collection
 	{
 		if ($this->isEmpty()) return $this->returnItem([]);
-		$this->setItems($this->lowercase()->items());
+		$this->collect($this->lowercase()->items());
 		return $this->map('ucfirst');
 	}
 
@@ -249,6 +259,20 @@ class Collection implements Iterator
 		return $this->map(function($value) use ($preText, $postText)
 		{
 			return "{$preText}{$value}{$postText}";
+		});
+	}
+
+	/**
+	 * Slugify array values.
+	 * @return Collection
+	 */
+	public function slugify() : Collection
+	{
+		$slugify = (new Slugify);
+		if ($this->isEmpty()) return $this->returnItem([]);
+		return $this->walk(function(&$value) use ($slugify)
+		{
+			$value = $slugify->slugify($value);
 		});
 	}
 }

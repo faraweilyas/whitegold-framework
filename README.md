@@ -1,4 +1,8 @@
-## About whiteGold
+## whiteGold
+
+[![Latest Stable Version](https://poser.pugx.org/faraweilyas/whitegold-framework/v/stable)](https://packagist.org/packages/faraweilyas/whitegold-framework)
+[![Total Downloads](https://poser.pugx.org/faraweilyas/whitegold-framework/downloads)](https://packagist.org/packages/faraweilyas/whitegold-framework)
+[![License](https://poser.pugx.org/faraweilyas/whitegold-framework/license)](https://packagist.org/packages/faraweilyas/whitegold-framework)
 
 > **Note:** This repository contains the core code of the whiteGold framework. If you want to build an application using whiteGold, visit the main [whiteGold repository](https://github.com/faraweilyas/whitegold).
 

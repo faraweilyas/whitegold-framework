@@ -1,4 +1,4 @@
-## whiteGold
+## whiteGold Framework
 
 [![Latest Stable Version](https://poser.pugx.org/faraweilyas/whitegold-framework/v/stable)](https://packagist.org/packages/faraweilyas/whitegold-framework)
 [![Total Downloads](https://poser.pugx.org/faraweilyas/whitegold-framework/downloads)](https://packagist.org/packages/faraweilyas/whitegold-framework)

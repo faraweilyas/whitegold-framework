@@ -415,15 +415,15 @@ abstract class RouterParts implements RouterDaemonInterface
 	}
 	
 	/**
-	* Checks route for analyzing for FILE, URL, REDIRECTION in HTML.
+	* Checks route analyzing for FILE, URL, REDIRECTION in HTML.
 	* @param string $value
 	* @param bool $return
 	* @return string
 	*/
-	final protected static function routeDriver (string $value, bool $return=TRUE) : string
+	final protected static function routeDriver(string $value, bool $return=TRUE) : string
 	{
 		if (!$return):
-			print static::routeHelper($value);
+			echo static::routeHelper($value);
 		endif;
 		return static::routeHelper($value);
 	}
@@ -432,7 +432,7 @@ abstract class RouterParts implements RouterDaemonInterface
 	* Debugger that shows steps on how router works for developers.
 	* @return void
 	*/
-	public static function _DEBUG ()
+	public static function _DEBUG()
 	{
 		echo "<h4>Step 1: Requested Get Route</h4>";
 		static::getUrl();

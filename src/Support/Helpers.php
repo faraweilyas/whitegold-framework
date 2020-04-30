@@ -108,7 +108,7 @@ if (!function_exists('__file')):
 	* @param string $callback
 	* @return mixed
 	*/
-	function __file ($file='', bool $return=TRUE, string $callback="")
+	function __file($file='', bool $return=TRUE, string $callback="")
 	{
 		$file = (!empty($callback) AND function_exists($callback)) ? $callback($file) : $file;
 		return Route::_file($file, $return);
@@ -122,7 +122,7 @@ if (!function_exists('__url')):
 	* @param bool $return
 	* @return mixed
 	*/
-	function __url ($url='', bool $return=TRUE)
+	function __url($url='', bool $return=TRUE)
 	{
 		return Route::_url($url, $return);
 	}
@@ -225,7 +225,7 @@ if (!function_exists('isFileAvailable')):
 	* @param mixed $files 
 	* @return string
 	*/
-	function isFileAvailable (...$files) : string
+	function isFileAvailable(...$files) : string
 	{
 		foreach ($files as $file) 
 			if (file_exists($file)) return $file;
@@ -385,7 +385,7 @@ if (!function_exists('deleteFile')):
 	* @param string $file
 	* @return void
 	*/
-	function deleteFile ($file='')
+	function deleteFile($file='')
 	{
 		if (file_exists($file)) unlink($file);
 	}
@@ -397,7 +397,7 @@ if (!function_exists('html')):
 	* @param string $rawString
 	* @return mixed
 	*/ 
-	function html ($rawString=NULL) : string
+	function html($rawString=NULL) : string
 	{
 		return Validate::hasValue($rawString) ? htmlentities($rawString) : "";
 	}
@@ -409,7 +409,7 @@ if (!function_exists('j')):
 	* @param string $rawString
 	* @return mixed
 	*/
-	function j ($rawString='')
+	function j($rawString='')
 	{
 		return Validate::hasValue($rawString) ? json_encode($rawString) : "";
 	}
@@ -421,7 +421,7 @@ if (!function_exists('url')):
 	* @param string $rawString
 	* @return mixed
 	*/
-	function url ($rawString='')
+	function url($rawString='')
 	{
 		return Validate::hasValue($rawString) ? urlencode($rawString) : "";
 	}
@@ -475,7 +475,7 @@ if (!function_exists('getReferer')):
 	* @param string $location
 	* @return string
 	*/
-	function getReferer ($location='') : string
+	function getReferer($location='') : string
 	{
 		$location = !empty($location) ? $location : "./";
 		return $_SERVER['HTTP_REFERER'] ?? $location;
@@ -539,11 +539,15 @@ endif;
 if (!function_exists('getHost')):
 	/**
 	* Get Host
+	* @param string $overrideProtocol
 	* @return string
 	*/
-	function getHost() : string
+	function getHost(string $overrideProtocol=NULL) : string
 	{
-		$protocol = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off' || $_SERVER['SERVER_PORT'] == 443) ? "https://" : "http://";
+		$originalProtocol 	= (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off' || $_SERVER['SERVER_PORT'] == 443)
+							? "https://" : "http://";
+		$protocol 			= (empty($overrideProtocol))
+							? $originalProtocol : $overrideProtocol;
 		return $protocol.($_SERVER['HTTP_HOST'] ?? "");
 	}
 endif;

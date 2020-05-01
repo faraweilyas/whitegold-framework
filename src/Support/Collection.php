@@ -2,8 +2,8 @@
 
 namespace Blaze\Support;
 
-use Iterator;
 use Cocur\Slugify\Slugify;
+use Doctrine\Common\Inflector\Inflector;
 
 /**
  * whiteGold - mini PHP Framework
@@ -14,7 +14,7 @@ use Cocur\Slugify\Slugify;
  *
  * Collection class
  */
-class Collection implements Iterator
+class Collection extends Collector
 {
 	private $items = [];
 
@@ -23,49 +23,24 @@ class Collection implements Iterator
 		$this->collect($items);
 	}
 
-	public function collect($items)
-	{
-		$this->items = $items;
-	}
-
 	public function __invoke()
 	{
 		return $this->items();
 	}
 
-	public function rewind()
+	public function collect($items)
 	{
-		return reset($this->items);
+		$this->items = $items;
 	}
 
-	public function current()
+	public function items() : array
 	{
-		return current($this->items);
-	}
-
-	public function key()
-	{
-		return key($this->items);
-	}
-
-	public function next()
-	{
-		return next($this->items);
-	}
-
-	public function valid()
-	{
-		return key($this->items) !== NULL;
+		return ($this->isEmpty()) ? [] : $this->items;
 	}
 
 	public function isEmpty() : bool
 	{
 		return empty($this->items);
-	}
-
-	public function has($value) : bool
-	{
-		return in_array($value, $this->items);
 	}
 
 	public function returnItem($item)
@@ -78,11 +53,6 @@ class Collection implements Iterator
 		if ($this->isEmpty()) return $this->returnItem([]);
 		$this->rewind();
 		return $this->returnItem($this->items);
-	}
-
-	public function items() : array
-	{
-		return ($this->isEmpty()) ? [] : $this->items;
 	}
 
 	public function first()
@@ -112,6 +82,11 @@ class Collection implements Iterator
 	{
 		if ($this->isEmpty()) return $this->returnItem([]);
 		return $this->returnItem(array_values($this->items));
+	}
+
+	public function has($value) : bool
+	{
+		return in_array($value, $this->items);
 	}
 
 	public function sum() : int

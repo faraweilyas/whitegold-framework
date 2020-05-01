@@ -22,6 +22,7 @@
     		"Blaze\\": "src"
     	},
         "files": [
+            "src/Support/Wrappers.php",
             "src/Support/Helpers.php"
         ]
     },

@@ -27,11 +27,11 @@ abstract class Validator
     const FORMAT_URL 		= "/\A(?:http|https):\/\/[\w.\-]+(?:\.[\w\-]+)+[\w\-.,@?^=%&:;\/~\\+#]+\Z/";
 
 	/**
-	* Checks if an attribute has a value.
-    * @param mixed $values
-    * @return bool
-	*/
-	final public static function hasValue (...$values) : bool
+	 * Checks if an attribute has a value.
+     * @param mixed $values
+     * @return bool
+	 */
+	final public static function hasValue(...$values) : bool
 	{
 		foreach ($values as $value):
 			if (is_array($value)):
@@ -49,24 +49,24 @@ abstract class Validator
 	}
 
 	/**
-	* Validates if first parameter is less than, equal to or greater than second parameter.
-    * @param mixed $firstValue
-    * @param mixed $secondValue 
-    * @return int
-	*/
-	final public static function compareValues ($firstValue, $secondValue) : int
+	 * Validates if first parameter is less than, equal to or greater than second parameter.
+     * @param mixed $firstValue
+     * @param mixed $secondValue 
+     * @return int
+	 */
+	final public static function compareValues($firstValue, $secondValue) : int
 	{
 		if (!self::hasValue($firstValue, $secondValue)) new ErrorCode(1001);
 	    return $firstValue <=> $secondValue;
 	}
 
 	/**
-	* Checks for the maximum, minimum or exact length of a value.
-    * @param mixed $value
-    * @param array $options 
-    * @return bool
-	*/
-	final public static function hasLength ($value, array $options=[]) : bool
+	 * Checks for the maximum, minimum or exact length of a value.
+     * @param mixed $value
+     * @param array $options 
+     * @return bool
+	 */
+	final public static function hasLength($value, array $options=[]) : bool
 	{
 		$valueLength = strlen($value);
 		if (!self::hasValue($value)) new ErrorCode(1001);
@@ -84,12 +84,12 @@ abstract class Validator
 	}
 
 	/**
-	* Validates if parameter is a number and if options aren't empty it checks the length.
-    * @param mixed $value
-    * @param array $options 
-    * @return bool
-	*/
-	final public static function hasNumber ($value, array $options=[]) : bool
+	 * Validates if parameter is a number and if options aren't empty it checks the length.
+     * @param mixed $value
+     * @param array $options 
+     * @return bool
+	 */
+	final public static function hasNumber($value, array $options=[]) : bool
 	{
 		if (!self::hasValue($value))  new ErrorCode(1001);
 
@@ -102,12 +102,12 @@ abstract class Validator
 	}
 
 	/**
-	* Checks if parameter matches a certain format.
-    * @param mixed $value
-    * @param regex $format 
-    * @return bool
-	*/
-	final public static function formatMatch ($value='', $regexFormat='') : bool
+	 * Checks if parameter matches a certain format.
+     * @param mixed $value
+     * @param regex $format 
+     * @return bool
+	 */
+	final public static function formatMatch($value='', $regexFormat='') : bool
 	{	
 		// Match for length '/\A\d{4}\Z/'
 		if (!self::hasValue($value))  new ErrorCode(1001);
@@ -117,19 +117,19 @@ abstract class Validator
 	}
 
 	/**
-	* Checks error.
-    * @return bool
-	*/
-	final public static function checkError () : bool
+	 * Checks error.
+     * @return bool
+	 */
+	final public static function checkError() : bool
 	{
 		return !static::hasValue(static::$error) ? TRUE : FALSE;
 	}
 
 	/**
-	* Gets error.
-    * @return string
-	*/
-	final public static function getError () : string
+	 * Gets error.
+     * @return string
+	 */
+	final public static function getError() : string
 	{
 		return static::$error;
 	}

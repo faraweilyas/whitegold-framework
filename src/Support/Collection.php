@@ -149,7 +149,6 @@ class Collection extends Collector
 	{
 		if ($this->isEmpty()) return $this->returnItem([]);
 		$this->collect($this->lowercase()->items());
-		// return $this->map('ucwords');
 		return $this->walk(function(&$value) use ($delimiters)
 		{
 			$value = Inflector::ucwords($value, $delimiters);

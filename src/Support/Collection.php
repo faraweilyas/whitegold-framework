@@ -140,11 +140,20 @@ class Collection extends Collector
 		return $this->map('strtolower');
 	}
 
-	public function ucwords() : Collection
+	/**
+	 * Apply ucwords function to array values to capitalize first character.
+	 * @param strin $delimiters
+	 * @return Collection
+	 */
+	public function ucwords(string $delimiters=" \t\r\n\f\v") : Collection
 	{
 		if ($this->isEmpty()) return $this->returnItem([]);
 		$this->collect($this->lowercase()->items());
-		return $this->map('ucwords');
+		// return $this->map('ucwords');
+		return $this->walk(function(&$value) use ($delimiters)
+		{
+			$value = Inflector::ucwords($value, $delimiters);
+		});
 	}
 
 	public function ucfirst() : Collection
@@ -248,6 +257,74 @@ class Collection extends Collector
 		return $this->walk(function(&$value) use ($slugify)
 		{
 			$value = $slugify->slugify($value);
+		});
+	}
+
+	/**
+	 * Tableize array values.
+	 * Ex of array values: ModelName
+	 * @return Collection
+	 */
+	public function tableize() : Collection
+	{
+		if ($this->isEmpty()) return $this->returnItem([]);
+		return $this->walk(function(&$value)
+		{
+			$value = Inflector::tableize($value);
+		});
+	}
+
+	/**
+	 * Classify array values.
+	 * Ex of array values: model_name
+	 * @return Collection
+	 */
+	public function classify() : Collection
+	{
+		if ($this->isEmpty()) return $this->returnItem([]);
+		return $this->walk(function(&$value)
+		{
+			$value = Inflector::classify($value);
+		});
+	}
+
+	/**
+	 * Camelize array values.
+	 * Ex of array values: model_name
+	 * @return Collection
+	 */
+	public function camelize() : Collection
+	{
+		if ($this->isEmpty()) return $this->returnItem([]);
+		return $this->walk(function(&$value)
+		{
+			$value = Inflector::camelize($value);
+		});
+	}
+
+	/**
+	 * Pluralize array values.
+	 * @return Collection
+	 */
+	public function pluralize() : Collection
+	{
+		if ($this->isEmpty()) return $this->returnItem([]);
+		return $this->walk(function(&$value)
+		{
+			$value = Inflector::pluralize($value);
+		});
+	}
+
+	/**
+	 * Singularize array values.
+	 * @return Collection
+	 */
+	public function singularize() : Collection
+	{
+		if ($this->isEmpty()) return $this->returnItem([]);
+		return $this->walk(function(&$value)
+		{
+			$value = Inflector::singularize($value);
 		});
 	}
 }

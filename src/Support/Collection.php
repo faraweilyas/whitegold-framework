@@ -142,7 +142,7 @@ class Collection extends Collector
 
 	/**
 	 * Apply ucwords function to array values to capitalize first character.
-	 * @param strin $delimiters
+	 * @param string $delimiters
 	 * @return Collection
 	 */
 	public function ucwords(string $delimiters=" \t\r\n\f\v") : Collection

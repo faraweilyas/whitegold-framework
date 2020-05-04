@@ -31,6 +31,20 @@ class Collection extends Collector
 	public function collect($items)
 	{
 		$this->items = $items;
+		
+        // if (is_array($items)) {
+        //     return $items;
+        // } elseif ($items instanceof self) {
+        //     return $items->all();
+        // } elseif ($items instanceof Arrayable) {
+        //     return $items->toArray();
+        // } elseif ($items instanceof Jsonable) {
+        //     return json_decode($items->toJson(), true);
+        // } elseif ($items instanceof JsonSerializable) {
+        //     return $items->jsonSerialize();
+        // }
+
+        // return (array) $items;
 	}
 
 	public function items() : array

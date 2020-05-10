@@ -3,6 +3,9 @@
 namespace Blaze\Support;
 
 use Iterator;
+use Countable;
+use Serializable;
+use JsonSerializable;
 
 /**
  * whiteGold - mini PHP Framework
@@ -13,7 +16,7 @@ use Iterator;
  *
  * Collector class
  */
-class Collector implements Iterator
+class Collector implements Iterator, Countable, JsonSerializable, Serializable
 {
 	public function rewind()
 	{
@@ -39,4 +42,24 @@ class Collector implements Iterator
 	{
 		return key($this->items) !== NULL;
 	}
+
+	public function count() : int
+	{
+		return count($this->items);
+	}
+
+	public function jsonSerialize()
+	{
+		return ($this->isEmpty()) ? [] : $this->items;
+	}
+	
+    public function serialize() : string
+    {
+        return serialize($this->items);
+    }
+
+    public function unserialize($items)
+    {
+        $this->items = unserialize($items);
+    }
 }

@@ -16,7 +16,7 @@ use Doctrine\Common\Inflector\Inflector;
  */
 class Collection extends Collector
 {
-	private $items = [];
+	protected $items = [];
 
 	public function __construct($items)
 	{
@@ -31,20 +31,6 @@ class Collection extends Collector
 	public function collect($items)
 	{
 		$this->items = $items;
-		
-        // if (is_array($items)) {
-        //     return $items;
-        // } elseif ($items instanceof self) {
-        //     return $items->all();
-        // } elseif ($items instanceof Arrayable) {
-        //     return $items->toArray();
-        // } elseif ($items instanceof Jsonable) {
-        //     return json_decode($items->toJson(), true);
-        // } elseif ($items instanceof JsonSerializable) {
-        //     return $items->jsonSerialize();
-        // }
-
-        // return (array) $items;
 	}
 
 	public function items() : array
@@ -72,18 +58,13 @@ class Collection extends Collector
 	public function first()
 	{
 		if ($this->isEmpty()) return $this->returnItem([]);
-		return $this->refresh();
+		return $this->refresh()->current();
 	}
 
 	public function last()
 	{
 		if ($this->isEmpty()) return $this->returnItem([]);
 		return $this->returnItem(end($this->items));
-	}
-
-	public function count() : int
-	{
-		return count($this->items);
 	}
 
 	public function keys() : Collection
@@ -101,6 +82,12 @@ class Collection extends Collector
 	public function has($value) : bool
 	{
 		return in_array($value, $this->items);
+	}
+
+	public function toJson() : string
+	{
+		return json_encode($this->items());
+		return ($this->isEmpty()) ? "" : json_encode($this->items());
 	}
 
 	public function sum() : int

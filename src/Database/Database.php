@@ -15,27 +15,36 @@ use Blaze\Logger\Log;
  */
 class Database
 {
-	// Stores database connection
+	/**
+	 * Stores database connection
+	 * @var resource
+	 */
 	private $connection;
 	
-	// Stores last query to the database
+	/**
+	 * Stores last query to the database
+	 * @var string
+	 */
 	private static $lastQuery;
 
-	// Store the single instance.
+	/**
+	 * Store a singleton of the Database instance.
+	 * @var Blaze\Database\Database
+	 */
 	private static $instance;
 	
 	/**
-	* Open connection on instansiation.
-	*/
-	public function __construct ()
+	 * Open connection on instansiation.
+	 */
+	public function __construct()
 	{
 	    $this->openConnection();
 	}
 
 	/**
-	* Opens Database connection.
-	*/
-	final public function openConnection ()
+	 * Opens Database connection.
+	 */
+	final public function openConnection()
 	{
 		$this->connection = mysqli_connect(
 			getConstant('DB_HOST', TRUE),
@@ -49,29 +58,27 @@ class Database
 	}
 
     /**
-    * Get an instance of the Database.
-    * @return Database
-    */
-	public static function getInstance () : Database
+     * Get an instance of the Database.
+     * @return Database
+     */
+	public static function getInstance() : Database
 	{
-		if (!static::$instance) 
-			static::$instance = new static;
-		return static::$instance;
+		return (!static::$instance) ? new static : static::$instance;
 	}
 
 	/**
-	* Returns the database connection
-	* @return \Mysqli
-	*/
-	final public function getConnection () : \Mysqli
+	 * Returns the database connection
+	 * @return \Mysqli
+	 */
+	final public function getConnection() : \Mysqli
 	{
 		return $this->connection;
 	}
 
 	/**
-	* Closes Database connection.
-	*/
-	final public function closeConnection ()
+	 * Closes Database connection.
+	 */
+	final public function closeConnection()
 	{
 		if (!isset($this->connection)) return;
 		mysqli_close($this->connection);
@@ -79,11 +86,11 @@ class Database
 	}
 
 	/**
-	* Querys the database with provided sql.
-	* @param string $sql
-	* @return mixed
-	*/
-	final public function query (string $sql)
+	 * Querys the database with provided sql.
+	 * @param string $sql
+	 * @return mixed
+	 */
+	final public function query(string $sql)
 	{
 		static::$lastQuery 	= $sql;
 		$result 			= mysqli_query($this->connection, $sql);
@@ -92,21 +99,21 @@ class Database
 	}
 
 	/**
-	* Escapes value for database query
-	* @param string $value
-	* @return mixed
-	*/
-	final public function escapeValue (string $value=NULL)
+	 * Escapes value for database query
+	 * @param string $value
+	 * @return mixed
+	 */
+	final public function escapeValue(string $value=NULL)
 	{
 		return mysqli_real_escape_string($this->connection, $value);
 	}
 
 	/**
-	* Escapes values for database query
-	* @param array $values
-	* @return array
-	*/
-	final public function escapeValues (array $values) : array
+	 * Escapes values for database query
+	 * @param array $values
+	 * @return array
+	 */
+	final public function escapeValues(array $values) : array
 	{
 		$sanitizedValues = [];
 		foreach ($values as $key => $value):
@@ -117,56 +124,56 @@ class Database
 	}
 
 	/**
-	* Fetch returned array
-	* @param mixed $resultSet
-	* @return mixed
-	*/
-	final public static function fetchAssoc ($resultSet)
+	 * Fetch returned array
+	 * @param mixed $resultSet
+	 * @return mixed
+	 */
+	final public static function fetchAssoc($resultSet)
 	{
 		return mysqli_fetch_assoc($resultSet);
 	}
 
 	/**
-	* Get the returned num rows
-	* @param mixed $resultSet
-	* @return mixed
-	*/
-	final public static function numRows ($resultSet)
+	 * Get the returned num rows
+	 * @param mixed $resultSet
+	 * @return mixed
+	 */
+	final public static function numRows($resultSet)
 	{
 		return mysqli_num_rows($resultSet);
 	}
 
 	/**
-	* Get the last id inserted over the current database connection
-	* @return int
-	*/
-	final public function insertId () : int
+	 * Get the last id inserted over the current database connection
+	 * @return int
+	 */
+	final public function insertId() : int
 	{
 		return mysqli_insert_id($this->connection);
 	}
 
 	/**
-	* Check the affected rows
-	* @return int
-	*/
-	final public function affectedRows () : int
+	 * Check the affected rows
+	 * @return int
+	 */
+	final public function affectedRows() : int
 	{
 		return mysqli_affected_rows($this->connection);
 	}
 
 	/**
-	* Returns the last query sent to the database
-	* @return string
-	*/
-	final public static function lastQuery () : string
+	 * Returns the last query sent to the database
+	 * @return string
+	 */
+	final public static function lastQuery() : string
 	{
 		return static::$lastQuery ?: "";
 	}
 
 	/**
-	* Confirms result from database query
-	* @param mixed
-	*/
+	 * Confirms result from database query
+	 * @param mixed
+	 */
 	private function confirmQuery($result)
 	{
 		if ($result) return;

@@ -4,6 +4,7 @@ namespace Blaze\Support;
 
 use Iterator;
 use Countable;
+use ArrayAccess;
 use Serializable;
 use JsonSerializable;
 
@@ -16,7 +17,7 @@ use JsonSerializable;
  *
  * Collector class
  */
-class Collector implements Iterator, Countable, JsonSerializable, Serializable
+class Collector implements Iterator, Countable, JsonSerializable, Serializable, ArrayAccess
 {
 	public function rewind()
 	{
@@ -61,5 +62,30 @@ class Collector implements Iterator, Countable, JsonSerializable, Serializable
     public function unserialize($items)
     {
         $this->items = unserialize($items);
+    }
+
+    public function offsetExists($offset) : bool
+    {
+        return isset($this->items[$offset]);
+    }
+
+    public function offsetGet($offset)
+    {
+        return $this->offsetExists($offset) ? $this->items[$offset] : NULL;
+    }
+
+    public function offsetSet($offset, $value)
+    {
+        if (is_null($offset))
+        {
+            $this->items[] = $value;
+        } else {
+            $this->items[$offset] = $value;
+        }
+    }
+
+    public function offsetUnset($offset)
+    {
+        unset($this->items[$offset]);
     }
 }

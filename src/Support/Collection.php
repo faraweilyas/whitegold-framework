@@ -31,6 +31,7 @@ class Collection extends Collector
 	public function collect($items)
 	{
 		$this->items = $items;
+		return $this;
 	}
 
 	public function items() : array

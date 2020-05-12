@@ -2,6 +2,8 @@
 
 namespace Blaze\Database;
 
+use Blaze\Support\Collection;
+use Doctrine\Common\Inflector\Inflector;
 use Blaze\Validation\Validator as Validate;
 
 /**
@@ -53,6 +55,7 @@ class DatabaseObject extends DatabaseParts
     public function __construct(array $record=[])
     {
         $this->record = $record;
+        static::setTableName();
     }
 
     /**
@@ -62,6 +65,18 @@ class DatabaseObject extends DatabaseParts
 	public static function getTableName() : string
 	{
 		return static::$tableName;
+	}
+
+    /**
+     * Sets database table name
+     * @param string $tableName
+     * @return void
+     */
+	public static function setTableName(string $tableName=NULL)
+	{
+		static::$tableName 	= !empty($tableName)
+							? $tableName
+							: Inflector::tableize(get_called_class());
 	}
 
     /**
@@ -97,10 +112,10 @@ class DatabaseObject extends DatabaseParts
     }
 
 	/**
-	* Magic __isset method.
-	* @param string $property
-	* @return mixed
-	*/
+	 * Magic __isset method.
+	 * @param string $property
+	 * @return mixed
+	 */
     public function __isset(string $property)
     {
     	$property = $this->record[$property] ?? NULL;
@@ -113,12 +128,10 @@ class DatabaseObject extends DatabaseParts
 	 */
     public function get()
     {
-		$className 	= get_called_class();
-		$object 	= new $className;
 		foreach ($this->record as $attribute => $value):
-			$object->$attribute = $value;
+			$this->$attribute = $value;
 		endforeach;
-		return $object;
+		return $this;
     }
 
 	/**
@@ -226,9 +239,9 @@ class DatabaseObject extends DatabaseParts
 	/**
 	* Find all from the database
 	* @param string $order
-	* @return array
+	* @return mixed bool | Blaze\Support\Collection
 	*/
-	public static function findAll(string $order="DESC") : array
+	public static function findAll(string $order="DESC")
 	{
 		$order = static::validateOrder($order);
 		return static::findBySql("SELECT * FROM ".static::$tableName." ORDER BY id {$order}");
@@ -362,9 +375,9 @@ class DatabaseObject extends DatabaseParts
 	* Group by
 	* @param string $field
 	* @param string $order
-	* @return array
+	* @return mixed Collection
 	*/
-	public static function groupBy(string $field, string $order="DESC") : array
+	public static function groupBy(string $field, string $order="DESC")
 	{
 		$order = static::validateOrder($order);
 		return static::findBySql("SELECT * FROM ".static::$tableName." GROUP BY {$field} ORDER BY id {$order}");

@@ -12,14 +12,14 @@ namespace Blaze\Database;
  *
  * DatabaseParts Class
  */
-class DatabaseParts
+abstract class DatabaseParts
 {
 	/**
-	* Returns each row as objects in an associative array
-	* @param string $sql
-	* @return array
-	*/
-	final public static function findBySql(string $sql) : array
+	 * Returns each row as objects in an associative array
+	 * @param string $sql
+	 * @return Blaze\Support\Collection
+	 */
+	final public static function findBySql(string $sql)
 	{
         $dbObject 		= Database::getInstance();
 		$resultSet 		= $dbObject->query($sql);
@@ -28,14 +28,14 @@ class DatabaseParts
 		{
 			$objectArray[] = static::instantiate($row);
 		}
-		return $objectArray;
+		return collect($objectArray);
 	}
 	
 	/**
-	* Instantiates a new record 
-	* @param array $record
-	* @return object
-	*/
+	 * Instantiates a new record 
+	 * @param array $record
+	 * @return object
+	 */
 	final public static function instantiate(array $record)
 	{
 		$className = get_called_class();
@@ -43,33 +43,32 @@ class DatabaseParts
 	}
 
 	/**
-	* Checks if returned resultArray should return 1 element.
-	* @param string $sqlQuery
-	* @param int $limit
-	* @return mixed
-	*/
-	final public static function limitFindBySql (string $sqlQuery, int $limit=0)
+	 * Checks if returned resultArray should return 1 element.
+	 * @param string $sqlQuery
+	 * @param int $limit
+	 * @return mixed object | Collection
+	 */
+	final public static function limitFindBySql(string $sqlQuery, int $limit=0)
 	{
-		$resultArray = static::findBySql($sqlQuery.static::limitQuery($limit));
-		if (empty($resultArray)) return FALSE;
-		return ($limit == 1) ? array_shift($resultArray) : $resultArray;
+		$result = static::findBySql($sqlQuery.static::limitQuery($limit));
+		return ($limit == 1) ? $result->first() : $result;
 	}
 
 	/**
-	* Generates limit query.
-	* @param int $limit
-	* @return string
-	*/
-	final public static function limitQuery (int $limit=0) : string
+	 * Generates limit query.
+	 * @param int $limit
+	 * @return string
+	 */
+	final public static function limitQuery(int $limit=0) : string
 	{
 		return ($limit > 0) ? " LIMIT {$limit}" : "";
 	}
 
 	/**
-	* Return an array of attribute names and their values.
-	* @return array
-	*/
-	final public function attributes () : array
+	 * Return an array of attribute names and their values.
+	 * @return array
+	 */
+	final public function attributes() : array
 	{
 		$attributes = [];
 		foreach (static::$databaseFields as $field):
@@ -80,11 +79,11 @@ class DatabaseParts
 	}
 
 	/**
-	* Sanitize the values before submitting
-	* Note: does not alter the actual value of each attribute
-	* @return array
-	*/
-	final public function sanitizedAttributes () : array
+	 * Sanitize the values before submitting
+	 * Note: does not alter the actual value of each attribute
+	 * @return array
+	 */
+	final public function sanitizedAttributes() : array
 	{
         $dbObject 			= Database::getInstance();
 		$cleanAttributes 	= [];
@@ -96,11 +95,11 @@ class DatabaseParts
 	}
 
 	/**
-	* Generating sql query for update
-	* @param array
-	* @return string
-	*/
-	final public function generateQueryForUpdate () : string
+	 * Generating sql query for update
+	 * @param array
+	 * @return string
+	 */
+	final public function generateQueryForUpdate() : string
 	{
 		$generatedArray = [];
 		foreach ($this->sanitizedAttributes() as $key => $value):
@@ -110,34 +109,34 @@ class DatabaseParts
 	}
 
 	/**
-	* Checks if an object has given attribute.
-	* @param string $attribute
-	* @return bool
-	*/
-	final public function hasAttribute (string $attribute) : bool
+	 * Checks if an object has given attribute.
+	 * @param string $attribute
+	 * @return bool
+	 */
+	final public function hasAttribute(string $attribute) : bool
 	{
 		$objectAttributes = $this->attributes();
 		return array_key_exists($attribute, $objectAttributes);
 	}
 
 	/**
-	* Validates the order for sqlQuery
-	* @param string $order
-	* @return string
-	*/
-	final protected static function validateOrder (string $order="DESC") : string
+	 * Validates the order for sqlQuery
+	 * @param string $order
+	 * @return string
+	 */
+	final protected static function validateOrder(string $order="DESC") : string
 	{
 		$order = strtoupper($order);
 		return (!in_array($order, ["DESC", "ASC"])) ? "DESC" : $order;
 	}
 
 	/**
-	* Generates keys and thier values for sqlQuery
-	* @param array $associativeArray
-	* @param string $expressionOperator
-	* @return array
-	*/
-	final protected static function generateKeyValue (array $associativeArray, string $expressionOperator="AND") : array
+	 * Generates keys and thier values for sqlQuery
+	 * @param array $associativeArray
+	 * @param string $expressionOperator
+	 * @return array
+	 */
+	final protected static function generateKeyValue(array $associativeArray, string $expressionOperator="AND") : array
 	{
 		$generatedArray = [];
         $dbObject 		= Database::getInstance();
@@ -149,13 +148,13 @@ class DatabaseParts
 	}
 
 	/**
-	* Generate values for sqlQuery based on the operator
-	* @param string $column
-	* @param array $operatorValues
-	* @param string $expressionOperator
-	* @return string
-	*/
-	final protected static function generateValue (string $column, array $operatorValues, string $expressionOperator="AND") : string
+	 * Generate values for sqlQuery based on the operator
+	 * @param string $column
+	 * @param array $operatorValues
+	 * @param string $expressionOperator
+	 * @return string
+	 */
+	final protected static function generateValue(string $column, array $operatorValues, string $expressionOperator="AND") : string
 	{
         $dbObject 			= Database::getInstance();
         $column 			= $dbObject->escapeValue($column);
@@ -189,33 +188,33 @@ class DatabaseParts
 	}
 
 	/**
-	* Checks if expression is valid.
-	* @param string $expression
-	* @param string $defaultExpression
-	* @return bool
-	*/
-	final protected static function isExpressionValid (string $expression, string $defaultExpression="=") : bool
+	 * Checks if expression is valid.
+	 * @param string $expression
+	 * @param string $defaultExpression
+	 * @return bool
+	 */
+	final protected static function isExpressionValid(string $expression, string $defaultExpression="=") : bool
 	{
 		return static::validateOperator($expression, $defaultExpression);
 	}
 
 	/**
-	* Validates operator.
-	* @param string $operator
-	* @param string $defaultOperator
-	* @return string
-	*/
-	final protected static function validateOperator (string $operator, string $defaultOperator="=") : string
+	 * Validates operator.
+	 * @param string $operator
+	 * @param string $defaultOperator
+	 * @return string
+	 */
+	final protected static function validateOperator(string $operator, string $defaultOperator="=") : string
 	{
 		return static::isOperatorValid($operator) ? $operator : ($defaultOperator ?: '=');
 	}
 
 	/**
-	* Checks if operator is valid.
-	* @param string $operator
-	* @return bool
-	*/
-	final protected static function isOperatorValid (string $operator) : bool
+	 * Checks if operator is valid.
+	 * @param string $operator
+	 * @return bool
+	 */
+	final protected static function isOperatorValid(string $operator) : bool
 	{
 		// Arithmetic Operators
 		$operators1 = ['+', '-', '*', '/', '%'];

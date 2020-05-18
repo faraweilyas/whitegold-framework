@@ -118,24 +118,47 @@ class Collection extends Collector
 		return $this->map(NULL, ...$items);
 	}
 
+	/**
+	 * Get a column of array values
+	 * Which works on associative arrays or array of objects.
+	 * 
+	 * @param string $column
+	 * @param string $index
+	 * @return Collection
+	 */
 	public function pluck(string $column, string $index=NULL) : Collection
 	{
 		if ($this->isEmpty()) return $this->returnItem([]);
 		return $this->returnItem(array_column($this->items, $column, $index));
 	}
 
+	/**
+	 * Trim all array values.
+	 * 
+	 * @return Collection
+	 */
 	public function trim() : Collection
 	{
 		if ($this->isEmpty()) return $this->returnItem([]);
 		return $this->map('trim');
 	}
 
+	/**
+	 * Apply strtoupper function to array values.
+	 * 
+	 * @return Collection
+	 */
 	public function uppercase() : Collection
 	{
 		if ($this->isEmpty()) return $this->returnItem([]);
 		return $this->map('strtoupper');
 	}
 
+	/**
+	 * Apply strtolower function to array values.
+	 * 
+	 * @return Collection
+	 */
 	public function lowercase() : Collection
 	{
 		if ($this->isEmpty()) return $this->returnItem([]);
@@ -144,6 +167,7 @@ class Collection extends Collector
 
 	/**
 	 * Apply ucwords function to array values to capitalize first character.
+	 * 
 	 * @param string $delimiters
 	 * @return Collection
 	 */
@@ -157,6 +181,11 @@ class Collection extends Collector
 		});
 	}
 
+	/**
+	 * Apply ucfirst function to array values to capitalize first character of the first word.
+	 * 
+	 * @return Collection
+	 */
 	public function ucfirst() : Collection
 	{
 		if ($this->isEmpty()) return $this->returnItem([]);
@@ -164,24 +193,36 @@ class Collection extends Collector
 		return $this->map('ucfirst');
 	}
 
-	// Sorting type flags:
-	// SORT_REGULAR - compare items normally (don't change types)
-	// SORT_NUMERIC - compare items numerically
-	// SORT_STRING - compare items as strings
-	// SORT_LOCALE_STRING - compare items as strings, based on the current locale.
+	/**
+	 * Get unique values of items in array.
+	 * Sorting type flags:
+	 * SORT_REGULAR - compare items normally (don't change types)
+	 * SORT_NUMERIC - compare items numerically
+	 * SORT_STRING - compare items as strings
+	 * SORT_LOCALE_STRING - compare items as strings, based on the current locale.
+	 * 
+	 * @param int $sort_flags
+	 * @return Collection
+	 */
 	public function unique(int $sort_flags=SORT_STRING) : Collection
 	{
 		if ($this->isEmpty()) return $this->returnItem([]);
 		return $this->returnItem(array_unique($this->items, $sort_flags));
 	}
 
-	// Sorting type flags:
-	// SORT_REGULAR - compare items normally; the details are described in the comparison operators section
-	// SORT_NUMERIC - compare items numerically
-	// SORT_STRING - compare items as strings
-	// SORT_LOCALE_STRING - compare items as strings, based on the current locale. It uses the locale, which can be changed using setlocale()
-	// SORT_NATURAL - compare items as strings using "natural ordering" like natsort()
-	// SORT_FLAG_CASE - can be combined (bitwise OR) with SORT_STRING or SORT_NATURAL to sort strings case-insensitively
+	/**
+	 * Sort values of items in array.
+	 * Sorting type flags:
+	 * SORT_REGULAR - compare items normally; the details are described in the comparison operators section
+	 * SORT_NUMERIC - compare items numerically
+	 * SORT_STRING - compare items as strings
+	 * SORT_LOCALE_STRING - compare items as strings, based on the current locale. It uses the locale, which can be changed using setlocale()
+	 * SORT_NATURAL - compare items as strings using "natural ordering" like natsort()
+	 * SORT_FLAG_CASE - can be combined (bitwise OR) with SORT_STRING or SORT_NATURAL to sort strings case-insensitively
+	 * 
+	 * @param int $sort_flags
+	 * @return Collection
+	 */
 	public function sort(int $sort_flags=SORT_REGULAR) : Collection
 	{
 		if ($this->isEmpty()) return $this->returnItem([]);

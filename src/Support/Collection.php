@@ -206,7 +206,18 @@ class Collection extends Collector
 	public function sum() : int
 	{
 		if ($this->isEmpty()) return 0;
-		return $this->returnItem(array_sum($this->items));
+		return (int) $this->returnItem(array_sum($this->items));
+	}
+
+	/**
+     * Get product of all array items.
+	 *
+	 * @return int
+	 */
+	public function product() : int
+	{
+		if ($this->isEmpty()) return 0;
+		return (int) $this->returnItem(array_product($this->items));
 	}
 
 	/**
@@ -391,6 +402,22 @@ class Collection extends Collector
 		if ($this->isEmpty()) return $this->returnItem([]);
 		$items = (is_null($callback)) ? array_filter($this->items()) : array_filter($this->items(), $callback, $flag);
 		return $this->returnItem($items);
+	}
+
+	/**
+	 * Replace all occurrences of the search string with the replacement string in collection.
+	 * 
+	 * @param mixed $search
+	 * @param mixed $replace
+	 * @return Collection
+	 */
+	public function replace($search, $replace) : Collection
+	{
+		if ($this->isEmpty()) return $this->returnItem([]);
+		return $this->walk(function(&$value) use ($search, $replace)
+		{
+		    $value = str_replace($search, $replace, $value);
+		});
 	}
 
 	/**

@@ -14,12 +14,13 @@ use Blaze\Support\Collection;
 
 if (!function_exists('collect')):
 	/**
-	 * Wrapper to collect an array and return a collection.
-	 * @return mixed array | Collection $items
-	 * @param Blaze\Support\Collection
+	 * Wrapper to create a collection.
+	 * 
+	 * @param mixed $items
+	 * @return Collection
 	 */
 	function collect($items) : Collection
 	{
-		return ($items instanceof Collection) ? $items : new Collection($items);
+		return new Collection($items);
 	}
 endif;

@@ -3,6 +3,7 @@
 namespace Blaze\Support;
 
 use Cocur\Slugify\Slugify;
+use Blaze\Support\Collection;
 use Doctrine\Common\Inflector\Inflector;
 
 /**
@@ -16,39 +17,114 @@ use Doctrine\Common\Inflector\Inflector;
  */
 class Collection extends Collector
 {
+	/**
+	 * Stores collection.
+	 *
+	 * @var array $items
+	 */
 	protected $items = [];
 
+	/**
+	 * Constructor method to collect array into a collection.
+	 *
+	 * @return void
+	 */
 	public function __construct($items)
 	{
 		$this->collect($items);
 	}
 
+	/**
+	 * Magic method to be called when a collection is called as a function
+     * Which returns an array of collection or empty array if collection is empty.
+	 *
+	 * @return array
+	 */
 	public function __invoke()
 	{
 		return $this->items();
 	}
 
-	public function collect($items)
+    /**
+     * Magic method to be called when a collection is echoed
+     * Then convert the collection to json.
+     *
+     * @return string
+     */
+    public function __toString()
+    {
+        return $this->toJson();
+    }
+
+	/**
+     * Collects an array and merges with existing collection.
+	 *
+	 * @param mixed $items
+	 * @return Collection
+	 */
+	public function collect($items) : Collection
 	{
+		$existingItems 	= $this->items();
+		$newItems 		= $this->override($items)->items();
+		// Add array items to avoid loosing keys
+		$mergedItems 	= $existingItems + $newItems;
+		$this->items 	= $mergedItems;
+		return $this;
+	}
+
+	/**
+     * Overrides an existing collection with a new one
+	 *
+	 * @param mixed $items
+	 * @return Collection
+	 */
+	public function override($items) : Collection
+	{
+		if ($items instanceof Collection)
+			$items = $items->items();
+		if (!is_array($items))
+			$items = (array) $items;
+
 		$this->items = $items;
 		return $this;
 	}
 
+	/**
+     * Returns an empty array if collection is empty or array of collection.
+	 *
+	 * @return array
+	 */
 	public function items() : array
 	{
 		return ($this->isEmpty()) ? [] : $this->items;
 	}
 
+	/**
+     * Checks if collection is empty.
+	 *
+	 * @return bool
+	 */
 	public function isEmpty() : bool
 	{
 		return empty($this->items);
 	}
 
+	/**
+     * Returns a collection if it is an array or else the value.
+	 *
+	 * @param mixed $item
+	 * @return mixed
+	 */
 	public function returnItem($item)
 	{
 		return is_array($item) ? new static($item) : $item;
 	}
 
+	/**
+     * Resets collection.
+	 *
+	 * @return mixed
+	 */
 	public function refresh()
 	{
 		if ($this->isEmpty()) return $this->returnItem([]);
@@ -56,63 +132,119 @@ class Collection extends Collector
 		return $this->returnItem($this->items);
 	}
 
+	/**
+     * Get first element in array.
+	 *
+	 * @return mixed
+	 */
 	public function first()
 	{
 		if ($this->isEmpty()) return $this->returnItem([]);
 		return $this->refresh()->current();
 	}
 
+	/**
+     * Get last element in array.
+	 *
+	 * @return mixed
+	 */
 	public function last()
 	{
 		if ($this->isEmpty()) return $this->returnItem([]);
 		return $this->returnItem(end($this->items));
 	}
 
+	/**
+     * Get array keys.
+	 *
+	 * @return Collection
+	 */
 	public function keys() : Collection
 	{
 		if ($this->isEmpty()) return $this->returnItem([]);
 		return $this->returnItem(array_keys($this->items));
 	}
 
+	/**
+     * Get array values.
+	 *
+	 * @return Collection
+	 */
 	public function values() : Collection
 	{
 		if ($this->isEmpty()) return $this->returnItem([]);
 		return $this->returnItem(array_values($this->items));
 	}
 
+	/**
+     * Checks if a value is in array.
+	 *
+	 * @param mixed value
+	 * @return bool
+	 */
 	public function has($value) : bool
 	{
 		return in_array($value, $this->items);
 	}
 
+	/**
+     * Coverts array to json.
+	 *
+	 * @return string
+	 */
 	public function toJson() : string
 	{
 		return json_encode($this->items());
 		return ($this->isEmpty()) ? "" : json_encode($this->items());
 	}
 
+	/**
+     * Sum all array items.
+	 *
+	 * @return int
+	 */
 	public function sum() : int
 	{
 		if ($this->isEmpty()) return 0;
 		return $this->returnItem(array_sum($this->items));
 	}
 
+	/**
+     * Applies array_walk with a callback on array items.
+	 *
+	 * @param callable $callback
+	 * @param mixed $data
+	 * @return Collection
+	 */
 	public function walk(callable $callback=NULL, $data=NULL) : Collection
 	{
 		if ($this->isEmpty()) return $this->returnItem([]);
 		$items = $this->items();
 		array_walk($items, $callback, $data);
-		$this->collect($items);
+		$this->override($items);
 		return $this->returnItem($this->items);
 	}
 
-	public function map(callable $callback=NULL, ... $items) : Collection
+	/**
+     * Map a callback on array items.
+	 *
+	 * @param callable $callback
+	 * @param ... $items
+	 * @return Collection
+	 */
+	public function map(callable $callback=NULL, ...$items) : Collection
 	{
 		if ($this->isEmpty()) return $this->returnItem([]);
 		return $this->returnItem(array_map($callback, $this->items, ...$items));
 	}
 
-	public function zip(... $items) : Collection
+	/**
+     * Zip the collection together with one or more arrays.
+	 * 
+	 * @param ... $items
+	 * @return Collection
+	 */
+	public function zip(...$items) : Collection
 	{
 		if ($this->isEmpty()) return $this->returnItem([]);
 		return $this->map(NULL, ...$items);
@@ -174,7 +306,7 @@ class Collection extends Collector
 	public function ucwords(string $delimiters=" \t\r\n\f\v") : Collection
 	{
 		if ($this->isEmpty()) return $this->returnItem([]);
-		$this->collect($this->lowercase()->items());
+		$this->override($this->lowercase()->items());
 		return $this->walk(function(&$value) use ($delimiters)
 		{
 			$value = Inflector::ucwords($value, $delimiters);
@@ -189,7 +321,7 @@ class Collection extends Collector
 	public function ucfirst() : Collection
 	{
 		if ($this->isEmpty()) return $this->returnItem([]);
-		$this->collect($this->lowercase()->items());
+		$this->override($this->lowercase()->items());
 		return $this->map('ucfirst');
 	}
 
@@ -230,7 +362,13 @@ class Collection extends Collector
 		return $this->returnItem($this->items);
 	}
 
-	// Sorting type flags: @see sort()
+	/**
+	 * Sort values of array items in reverse.
+	 * Sorting type flags: @see sort()
+	 * 
+	 * @param int $sort_flags
+	 * @return Collection
+	 */
 	public function reverseSort(int $sort_flags=SORT_REGULAR) : Collection
 	{
 		if ($this->isEmpty()) return $this->returnItem([]);
@@ -238,9 +376,16 @@ class Collection extends Collector
 		return $this->returnItem($this->items);
 	}
 
-	// Flag determining what arguments are sent to callback:
-	// ARRAY_FILTER_USE_KEY - pass key as the only argument to callback instead of the value
-	// ARRAY_FILTER_USE_BOTH - pass both value and key as arguments to callback instead of the value
+	/**
+	 * Filter values of array items.
+	 * Flag determining what arguments are sent to callback:
+	 * ARRAY_FILTER_USE_KEY - pass key as the only argument to callback instead of the value
+	 * ARRAY_FILTER_USE_BOTH - pass both value and key as arguments to callback instead of the value
+	 * 
+	 * @param callable $callback
+	 * @param int $flag
+	 * @return Collection
+	 */
 	public function filter(callable $callback=NULL, int $flag=0) : Collection
 	{
 		if ($this->isEmpty()) return $this->returnItem([]);
@@ -248,13 +393,25 @@ class Collection extends Collector
 		return $this->returnItem($items);
 	}
 
+	/**
+	 * Flip values and keys of array items.
+	 * 
+	 * @return Collection
+	 */
 	public function flip() : Collection
 	{
 		if ($this->isEmpty()) return $this->returnItem([]);
 		return $this->returnItem(array_flip($this->items));
 	}
 
-	public function merge(... $items) : Collection
+	/**
+	 * Merge values of array items with parsed arguments.
+	 * NB: if keys are numeric array_merge will reassign new keys orderly
+	 * 
+	 * @param ... $items
+	 * @return Collection
+	 */
+	public function merge(...$items) : Collection
 	{
 		if ($this->isEmpty()) return $this->returnItem([]);
 		return $this->returnItem(array_merge($this->items, ...$items));
@@ -262,6 +419,7 @@ class Collection extends Collector
 
 	/**
 	 * Join array values.
+	 * 
 	 * @param string $glue
 	 * @param string $preText
 	 * @param string $postText
@@ -275,6 +433,7 @@ class Collection extends Collector
 
 	/**
 	 * Concatenate pre-text to the begining and post-text to the end of each array values.
+	 * 
 	 * @param string $preText
 	 * @param string $postText
 	 * @return Collection
@@ -290,12 +449,13 @@ class Collection extends Collector
 
 	/**
 	 * Slugify array values.
+	 * 
 	 * @return Collection
 	 */
 	public function slugify() : Collection
 	{
-		$slugify = (new Slugify);
 		if ($this->isEmpty()) return $this->returnItem([]);
+		$slugify = new Slugify;
 		return $this->walk(function(&$value) use ($slugify)
 		{
 			$value = $slugify->slugify($value);
@@ -304,7 +464,8 @@ class Collection extends Collector
 
 	/**
 	 * Tableize array values.
-	 * Ex of array values: ModelName
+	 * Ex: ModelName -> model_name
+	 * 
 	 * @return Collection
 	 */
 	public function tableize() : Collection
@@ -318,7 +479,8 @@ class Collection extends Collector
 
 	/**
 	 * Classify array values.
-	 * Ex of array values: model_name
+	 * Ex: model_name -> ModelName
+	 * 
 	 * @return Collection
 	 */
 	public function classify() : Collection
@@ -332,7 +494,8 @@ class Collection extends Collector
 
 	/**
 	 * Camelize array values.
-	 * Ex of array values: model_name
+	 * Output Ex: modelName
+	 * 
 	 * @return Collection
 	 */
 	public function camelize() : Collection
@@ -346,6 +509,7 @@ class Collection extends Collector
 
 	/**
 	 * Pluralize array values.
+	 * 
 	 * @return Collection
 	 */
 	public function pluralize() : Collection
@@ -359,6 +523,7 @@ class Collection extends Collector
 
 	/**
 	 * Singularize array values.
+	 * 
 	 * @return Collection
 	 */
 	public function singularize() : Collection

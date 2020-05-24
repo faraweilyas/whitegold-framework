@@ -45,6 +45,11 @@ class View
 			require getConstant("BOOTSTRAP", TRUE)."Initializers.php";
 			require_once $fileLocation;
 			ob_end_flush();
+
+			// ob_start();
+			// debug_print_backtrace();
+			// $trace = ob_get_contents();
+			// ob_end_clean();
 			return TRUE;
 		endif;
 		print "'$fileLocation': File was not found."; 
